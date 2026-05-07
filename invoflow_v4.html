@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>InvoFlow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --font:'DM Sans',sans-serif;
+  --mono:'DM Mono',monospace;
+  /* Brand palette */
+  --indigo-950:#0f0d2e;
+  --indigo-900:#1e1b4b;
+  --indigo-800:#312e81;
+  --indigo-700:#3730a3;
+  --indigo-600:#4338ca;
+  --indigo-100:#e0e7ff;
+  --emerald-600:#059669;
+  --emerald-500:#10b981;
+  --emerald-100:#d1fae5;
+  --emerald-50:#ecfdf5;
+  --amber-600:#d97706;
+  --amber-500:#f59e0b;
+  --amber-100:#fef3c7;
+  --red-600:#dc2626;
+  --red-100:#fee2e2;
+  --blue-600:#2563eb;
+  --blue-100:#dbeafe;
+  --pink-100:#fce7f3;
+  --pink-700:#9d174d;
+  /* UI tokens */
+  --bg:#ffffff;
+  --bg2:#f8fafc;
+  --bg3:#f1f5f9;
+  --bd:#e2e8f0;
+  --bd2:#cbd5e1;
+  --tx:#0f172a;
+  --tx2:#475569;
+  --tx3:#94a3b8;
+  --bgs:var(--emerald-100);
+  --bgw:var(--amber-100);
+  --bgr:var(--red-100);
+  --bgi:var(--blue-100);
+  --txs:var(--emerald-600);
+  --txw:var(--amber-600);
+  --txr:var(--red-600);
+  --txi:var(--blue-600);
+  --r:8px;--rl:12px;--rxl:16px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+  --shadow-md:0 4px 12px rgba(0,0,0,.1),0 2px 4px rgba(0,0,0,.06);
+  --shadow-lg:0 10px 30px rgba(0,0,0,.12),0 4px 8px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg2);min-height:100vh;color:var(--tx)}
+.h{display:none!important}
+
+/* ── AUTH ── */
+.abg{min-height:100vh;background:linear-gradient(135deg,var(--indigo-950) 0%,var(--indigo-800) 60%,#1e3a5f 100%);display:flex;align-items:center;justify-content:center;padding:24px;position:relative;overflow:hidden}
+.abg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(5,150,105,.12) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(67,56,202,.2) 0%,transparent 50%)}
+.acard{background:#fff;border-radius:var(--rxl);padding:32px 36px;width:100%;max-width:400px;box-shadow:var(--shadow-lg);position:relative;z-index:1}
+.atitle{font-size:18px;font-weight:600;color:var(--tx);margin-bottom:5px}
+.asub{font-size:13px;color:var(--tx2);margin-bottom:22px;line-height:1.5}
+.fld{margin-bottom:13px}
+.fld label{display:block;font-size:11.5px;font-weight:500;color:var(--tx2);margin-bottom:5px;letter-spacing:.01em}
+.fld input,.fld select{width:100%;padding:9px 12px;border:1.5px solid var(--bd);border-radius:var(--r);font-size:13px;background:#fff;color:var(--tx);font-family:var(--font);transition:border-color .15s,box-shadow .15s}
+.fld input:focus,.fld select:focus{outline:none;border-color:var(--indigo-600);box-shadow:0 0 0 3px rgba(67,56,202,.1)}
+.pbtn{width:100%;padding:11px;background:linear-gradient(135deg,var(--indigo-700),var(--indigo-600));color:#fff;border:none;border-radius:var(--r);font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font);letter-spacing:.01em;box-shadow:0 2px 8px rgba(67,56,202,.3);transition:opacity .15s,transform .1s}
+.pbtn:hover{opacity:.92;transform:translateY(-1px)}
+.pbtn:active{transform:translateY(0)}
+.lnk{font-size:12px;color:var(--indigo-600);cursor:pointer;background:none;border:none;padding:0;font-family:var(--font);font-weight:500}
+.lnk:hover{text-decoration:underline}
+.okbx{background:var(--emerald-50);color:var(--emerald-600);font-size:12px;padding:9px 12px;border-radius:var(--r);margin-bottom:12px;border:1px solid rgba(5,150,105,.2)}
+.backbtn{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--tx2);cursor:pointer;background:none;border:none;padding:0;font-family:var(--font);margin-bottom:16px}
+.backbtn:hover{color:var(--tx)}
+.otp-row{display:flex;gap:8px;justify-content:center;margin:14px 0 6px}
+.otpinp{width:44px;height:50px;text-align:center;font-size:20px;font-weight:600;border:1.5px solid var(--bd);border-radius:var(--r);background:#fff;color:var(--tx);font-family:var(--mono)}
+.otpinp:focus{outline:none;border-color:var(--indigo-600);box-shadow:0 0 0 3px rgba(67,56,202,.1)}
+.timer-row{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--tx2);margin:6px 0 14px}
+.rsbtn{background:none;border:none;font-size:12px;color:var(--indigo-600);cursor:pointer;padding:0;font-family:var(--font);font-weight:500}
+.rsbtn:disabled{color:var(--tx3);cursor:not-allowed}
+.demo-hint{margin-top:16px;background:var(--indigo-100);border-radius:var(--r);padding:10px 12px;font-size:11px;color:var(--indigo-700);line-height:1.8;border:1px solid rgba(67,56,202,.15)}
+.demo-role{display:inline-block;margin:2px 3px 2px 0;padding:2px 9px;border-radius:20px;font-size:10.5px;background:rgba(67,56,202,.12);color:var(--indigo-700);cursor:pointer;border:1px solid rgba(67,56,202,.2);font-weight:500}
+.demo-role:hover{background:rgba(67,56,202,.22)}
+
+/* ── SHELL ── */
+.shell{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:220px;background:linear-gradient(180deg,var(--indigo-950) 0%,var(--indigo-900) 100%);flex-shrink:0;display:flex;flex-direction:column;overflow-y:auto;position:sticky;top:0;height:100vh}
+.sidebar::-webkit-scrollbar{width:0}
+.s-logo{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:10px}
+.s-logo-text{font-size:15px;font-weight:700;color:#fff;letter-spacing:-.3px}
+.ssec{padding:14px 14px 4px;font-size:9px;color:rgba(255,255,255,.25);letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 12px;margin:1px 8px;border-radius:8px;cursor:pointer;font-size:12.5px;color:rgba(255,255,255,.5);border:none;background:transparent;width:calc(100% - 16px);text-align:left;font-family:var(--font);transition:all .15s;font-weight:500}
+.ni:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85)}
+.ni.on{background:linear-gradient(135deg,rgba(5,150,105,.25),rgba(5,150,105,.15));color:#34d399;border:1px solid rgba(5,150,105,.2)}
+.ni-ic{width:15px;height:15px;flex-shrink:0;opacity:.6}
+.ni.on .ni-ic{opacity:1}
+.nbadge{margin-left:auto;background:rgba(245,158,11,.2);color:#fcd34d;font-size:9.5px;padding:2px 6px;border-radius:20px;font-weight:600}
+.s-foot{margin-top:auto;padding:10px;border-top:1px solid rgba(255,255,255,.06)}
+.s-user{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;cursor:pointer;transition:all .15s}
+.s-user:hover{background:rgba(255,255,255,.06)}
+.uav{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,rgba(5,150,105,.3),rgba(67,56,202,.3));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#34d399;flex-shrink:0;border:1px solid rgba(52,211,153,.2)}
+.s-logout{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;cursor:pointer;background:none;border:none;color:rgba(255,255,255,.25);margin-left:auto;transition:all .15s}
+.s-logout:hover{background:rgba(239,68,68,.15);color:#f87171}
+
+/* ── CONTENT ── */
+.cnt{flex:1;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.topbar{background:var(--bg);border-bottom:1px solid var(--bd);padding:12px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.ptitle{font-size:14px;font-weight:700;color:var(--tx);letter-spacing:-.2px}
+.psub{font-size:11px;color:var(--tx3);margin-top:1px}
+.screen{display:flex;flex-direction:column;flex:1;overflow:hidden}
+.scr{padding:16px 20px;overflow-y:auto;flex:1}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:var(--r);font-size:12px;cursor:pointer;border:1.5px solid var(--bd);background:var(--bg);color:var(--tx);font-family:var(--font);transition:all .15s;white-space:nowrap;font-weight:500}
+.btn:hover{background:var(--bg2);border-color:var(--bd2)}
+.btn.p{background:linear-gradient(135deg,var(--indigo-700),var(--indigo-600));color:#fff;border-color:transparent;box-shadow:0 2px 6px rgba(67,56,202,.25)}
+.btn.p:hover{opacity:.9;transform:translateY(-1px)}
+.btn.emerald{background:linear-gradient(135deg,var(--emerald-600),var(--emerald-500));color:#fff;border-color:transparent;box-shadow:0 2px 6px rgba(5,150,105,.25)}
+.btn.emerald:hover{opacity:.9}
+.btn.sky{background:rgba(67,56,202,.08);color:var(--indigo-600);border-color:rgba(67,56,202,.2)}
+.btn.sky:hover{background:rgba(67,56,202,.14)}
+.btn.success{background:var(--emerald-50);color:var(--emerald-600);border-color:rgba(5,150,105,.25)}
+.btn.danger{background:var(--red-100);color:var(--red-600);border-color:rgba(220,38,38,.25)}
+.btn.warn{background:var(--amber-100);color:var(--amber-600);border-color:rgba(217,119,6,.25)}
+.btn.info{background:var(--blue-100);color:var(--blue-600);border-color:rgba(37,99,235,.25)}
+.btn.biz{background:rgba(67,56,202,.08);color:var(--indigo-700);border-color:rgba(67,56,202,.2)}
+.btn.biz:hover{background:rgba(67,56,202,.14)}
+.btn.sm{font-size:11px;padding:3px 9px}
+.btn.lg{font-size:13px;padding:9px 20px;font-weight:600}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--tx2)}
+.btn.ghost:hover{background:var(--bg2)}
+.btn-icon{width:28px;height:28px;border-radius:6px;border:1.5px solid var(--bd);background:var(--bg);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--tx2);transition:all .15s}
+.btn-icon:hover{background:var(--bg2);color:var(--tx);border-color:var(--bd2)}
+
+/* ── PILLS ── */
+.pill{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;white-space:nowrap;letter-spacing:.02em}
+.pill.pending{background:var(--amber-100);color:var(--amber-600)}
+.pill.error{background:var(--red-100);color:var(--red-600)}
+.pill.sent{background:var(--blue-100);color:var(--blue-600)}
+.pill.closed{background:var(--emerald-100);color:var(--emerald-600)}
+.pill.failed{background:var(--pink-100);color:var(--pink-700)}
+.pill.open{background:rgba(5,150,105,.1);color:var(--emerald-600)}
+.pill.overdue{background:var(--red-100);color:var(--red-600)}
+.pill.on-time,.pill.ontime{background:var(--emerald-100);color:var(--emerald-600)}
+.pill.delivered{background:var(--blue-100);color:var(--blue-600)}
+.pill.draft{background:var(--bg3);color:var(--tx2)}
+.pill.sp{background:rgba(67,56,202,.1);color:var(--indigo-700)}
+.pill.wp{background:rgba(5,150,105,.1);color:var(--emerald-600)}
+.pill.aw{background:var(--amber-100);color:var(--amber-600)}
+
+/* ── CARDS ── */
+.card{background:var(--bg);border:1px solid var(--bd);border-radius:var(--rl);padding:14px;box-shadow:var(--shadow)}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.ct{font-size:13px;font-weight:600;color:var(--tx);letter-spacing:-.1px}
+
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{text-align:left;padding:5px 8px;color:var(--tx2);font-weight:600;border-bottom:1.5px solid var(--bd);font-size:11px;white-space:nowrap;letter-spacing:.02em;text-transform:uppercase}
+.tbl td{padding:7px 8px;border-bottom:1px solid var(--bd);color:var(--tx);white-space:nowrap}
+.tbl tr:last-child td{border-bottom:none}
+.tbl .crow:hover td{background:rgba(67,56,202,.03);cursor:pointer}
+.jira-link{color:var(--indigo-600);text-decoration:underline;font-size:11px;font-family:var(--mono)}
+/* per-column filter inputs */
+.col-filter{width:100%;margin-top:4px;padding:3px 6px;border:1px solid var(--bd);border-radius:5px;font-size:10.5px;font-family:var(--font);background:#fff;color:var(--tx);font-weight:400;text-transform:none;letter-spacing:0}
+.col-filter:focus{outline:none;border-color:var(--indigo-600)}
+.col-filter-sel{width:100%;margin-top:4px;padding:3px 5px;border:1px solid var(--bd);border-radius:5px;font-size:10.5px;font-family:var(--font);background:#fff;color:var(--tx);font-weight:400;text-transform:none;letter-spacing:0}
+.col-filter-sel:focus{outline:none;border-color:var(--indigo-600)}
+
+/* ── STAT CARDS ── */
+.statrow{display:grid;gap:12px;margin-bottom:16px}
+.st4{grid-template-columns:repeat(4,1fr)}
+.st5{grid-template-columns:repeat(5,1fr)}
+.sc{background:var(--bg);border:1px solid var(--bd);border-radius:var(--rl);padding:12px 14px;cursor:pointer;box-shadow:var(--shadow);transition:all .15s;position:relative;overflow:hidden}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--indigo-600),var(--emerald-500));opacity:0;transition:opacity .2s}
+.sc:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.sc:hover::before{opacity:1}
+.sl{font-size:10.5px;color:var(--tx2);margin-bottom:4px;font-weight:500}
+.sv{font-size:22px;font-weight:700;color:var(--tx);font-family:var(--mono);letter-spacing:-.5px}
+.sd{font-size:10px;margin-top:3px;font-weight:500}
+.gu{color:var(--emerald-600)}.gw{color:var(--amber-600)}.gr{color:var(--red-600)}
+.twocol{display:grid;grid-template-columns:1.5fr 1fr;gap:14px}
+.tli{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd)}
+.tli:last-child{border-bottom:none}
+.tld{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+
+/* ── PANEL BOX ── */
+.panel{background:var(--bg);border:1px solid var(--bd);border-radius:var(--rl);display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow)}
+.ph{padding:10px 14px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--bg2)}
+.ph-title{font-size:12px;font-weight:600;color:var(--tx);letter-spacing:-.1px}
+.panel-body{overflow-y:auto;flex:1}
+
+/* ── PROGRESS BAR ── */
+.prog-wrap{background:var(--bg3);border-radius:20px;height:16px;overflow:hidden;min-width:100px;border:1px solid var(--bd)}
+.prog-fill{height:100%;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;transition:width .3s}
+
+/* ── INVOICE DASHBOARD ── */
+.inv-layout{padding:14px 18px;overflow:auto;flex:1;display:flex;flex-direction:column;gap:14px}
+.inv-top-row{display:flex;gap:14px;align-items:stretch;flex-shrink:0}
+.inv-pie-card{background:var(--bg);border:1px solid var(--bd);border-radius:var(--rl);padding:14px 16px;display:flex;align-items:center;gap:16px;min-width:270px;box-shadow:var(--shadow)}
+.pie-legend{display:flex;flex-direction:column;gap:6px}
+.pie-li{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--tx)}
+.pie-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.inv-hint-card{flex:1;background:linear-gradient(135deg,rgba(67,56,202,.06),rgba(5,150,105,.04));border:1.5px solid rgba(67,56,202,.2);border-radius:var(--rl);padding:18px 22px;display:flex;align-items:center;gap:18px;box-shadow:var(--shadow)}
+.inv-hint-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,rgba(67,56,202,.12),rgba(5,150,105,.1));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.inv-hint-text{font-size:13.5px;font-weight:500;color:var(--indigo-700);line-height:1.55}
+.inv-hint-badge{display:inline-flex;align-items:center;gap:3px;background:rgba(67,56,202,.1);border-radius:4px;padding:1px 7px;font-size:12.5px;color:var(--indigo-700)}
+.inv-tables-row{display:grid;grid-template-columns:1fr 230px;gap:14px;flex:1;min-height:0}
+
+/* ── RIGHT PANELS ── */
+.rp-bd{position:fixed;inset:0;background:rgba(15,13,46,.3);z-index:40;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(2px)}
+.rp-bd.vis{opacity:1;pointer-events:all}
+.rpanel{position:fixed;top:0;right:0;height:100vh;background:var(--bg);z-index:41;display:flex;flex-direction:column;box-shadow:-8px 0 40px rgba(0,0,0,.15);transform:translateX(100%);transition:transform .25s ease}
+.rpanel.open{transform:translateX(0)}
+.rp-sm{width:360px}.rp-md{width:500px}.rp-lg{width:620px}
+.rp-head{padding:16px 18px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--bg2)}
+.rp-title{font-size:14px;font-weight:700;color:var(--tx);letter-spacing:-.2px}
+.rp-close{background:none;border:none;cursor:pointer;color:var(--tx2);display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;transition:all .15s}
+.rp-close:hover{background:var(--bg3);color:var(--tx)}
+.rp-body{overflow-y:auto;flex:1;padding:18px}
+.rp-foot{padding:14px 18px;border-top:1px solid var(--bd);display:flex;gap:8px;flex-shrink:0}
+
+/* ── SUB SCREENS ── */
+.sub-sc{position:fixed;inset:0;background:var(--bg2);z-index:30;display:flex;flex-direction:column}
+.sub-head{background:var(--bg);border-bottom:1px solid var(--bd);padding:13px 20px;display:flex;align-items:center;gap:14px;flex-shrink:0;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.sub-body{overflow-y:auto;flex:1;padding:22px}
+.sub-title{font-size:14px;font-weight:700;color:var(--tx);letter-spacing:-.2px}
+.sub-sub{font-size:11.5px;color:var(--tx3);margin-top:2px}
+.mode-tabs{display:flex;gap:2px;background:var(--bg3);border-radius:8px;padding:3px;border:1px solid var(--bd)}
+.mode-tab{padding:5px 16px;border-radius:6px;font-size:12px;cursor:pointer;color:var(--tx2);border:none;background:transparent;font-family:var(--font);font-weight:500}
+.mode-tab.on{background:var(--bg);color:var(--tx);box-shadow:0 1px 4px rgba(0,0,0,.1);font-weight:600}
+
+/* ── FORMS ── */
+.fsec{background:var(--bg);border:1px solid var(--bd);border-radius:var(--rl);padding:18px;margin-bottom:16px;box-shadow:var(--shadow)}
+.fsec-title{font-size:13px;font-weight:700;color:var(--tx);margin-bottom:14px;display:flex;align-items:center;gap:7px;letter-spacing:-.1px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.f{display:flex;flex-direction:column;gap:5px}
+.f label{font-size:11.5px;color:var(--tx2);font-weight:500;letter-spacing:.01em}
+.req{color:var(--red-600)}
+.f input,.f select,.f textarea{padding:8px 11px;border:1.5px solid var(--bd);border-radius:var(--r);font-size:13px;background:#fff;color:var(--tx);font-family:var(--font);transition:border-color .15s}
+.f input:focus,.f select:focus{outline:none;border-color:var(--indigo-600);box-shadow:0 0 0 3px rgba(67,56,202,.08)}
+.f input.blocked,.f select.blocked{background:var(--bg3);color:var(--tx2);cursor:not-allowed}
+.edit-wrap{display:flex;align-items:center;gap:6px}
+.edit-wrap input{flex:1}
+.edit-btn{background:none;border:1.5px solid var(--bd);border-radius:6px;padding:3px;cursor:pointer;color:var(--tx2);display:flex;align-items:center;height:30px;width:30px;justify-content:center;transition:all .15s}
+.edit-btn:hover{background:var(--blue-100);color:var(--blue-600);border-color:rgba(37,99,235,.3)}
+
+/* ── UPLOAD ZONE ── */
+.uz{border:2px dashed var(--bd2);border-radius:var(--r);padding:22px;text-align:center;cursor:pointer;transition:all .15s}
+.uz:hover{border-color:var(--indigo-600);background:rgba(67,56,202,.02)}
+.uz-title{font-size:12.5px;color:var(--tx2);margin-top:10px;font-weight:500}
+.uz-sub{font-size:11px;color:var(--tx3);margin-top:3px}
+.file-pill{display:flex;align-items:center;gap:8px;background:var(--emerald-50);border:1px solid rgba(5,150,105,.2);border-radius:var(--r);padding:9px 13px}
+
+/* ── SCAN ANIMATION ── */
+.scan-zone{border:2px dashed rgba(67,56,202,.4);border-radius:var(--r);padding:22px;text-align:center;background:rgba(67,56,202,.03);position:relative;overflow:hidden}
+.scan-bar{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--indigo-600),transparent);animation:scan 1.5s linear infinite}
+@keyframes scan{0%{top:0}100%{top:100%}}
+
+/* ── INSTANCE ROWS ── */
+.inst-row{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:12px 14px;margin-bottom:10px}
+.inst-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.inst-total{display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border-radius:var(--r);padding:10px 14px;margin-top:8px;font-size:12px;border:1px solid var(--bd)}
+.iok{color:var(--emerald-600);font-weight:700}.iwarn{color:var(--amber-600);font-weight:700}.ierr{color:var(--red-600);font-weight:700}
+
+/* ── INV DETAIL ── */
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.meta-item{background:var(--bg2);border-radius:var(--r);padding:10px 12px;border:1px solid var(--bd)}
+.meta-lbl{font-size:9.5px;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;font-weight:600}
+.meta-val{font-size:13px;color:var(--tx);font-weight:600}
+.meta-val.sm{font-size:11.5px;font-weight:500;font-family:var(--mono)}
+.status-blk{border-radius:var(--rl);padding:14px 16px;margin-bottom:16px;border-left:3px solid}
+.att-row{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--bg2);border-radius:var(--r);margin-bottom:8px;border:1px solid var(--bd)}
+.att-ic{width:30px;height:30px;border-radius:7px;background:rgba(37,99,235,.1);display:flex;align-items:center;justify-content:center;color:var(--blue-600);flex-shrink:0}
+.trig-row{display:flex;gap:8px;padding:7px 0;border-bottom:1px solid var(--bd)}
+.trig-row:last-child{border-bottom:none}
+.trig-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
+
+/* ── TIMELINE ── */
+.timeline{padding-left:22px;position:relative}
+.timeline::before{content:'';position:absolute;left:7px;top:4px;bottom:0;width:2px;background:linear-gradient(180deg,var(--indigo-600),var(--emerald-500))}
+.tl-item{position:relative;padding-bottom:16px}
+.tl-dot{position:absolute;left:-18px;top:4px;width:12px;height:12px;border-radius:50%;border:2px solid var(--bg)}
+.tl-cnt{background:var(--bg);border:1px solid var(--bd);border-radius:var(--r);padding:9px 12px;box-shadow:var(--shadow)}
+.tl-ev{font-size:12px;font-weight:600;color:var(--tx)}
+.tl-det{font-size:11px;color:var(--tx2);margin-top:2px}
+.tl-dt{font-size:10.5px;color:var(--tx3);margin-top:3px;font-family:var(--mono)}
+
+/* ── PROFILE ── */
+.prof-av{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,rgba(67,56,202,.2),rgba(5,150,105,.2));display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:var(--indigo-600);margin:0 auto 12px;border:2px solid rgba(67,56,202,.2)}
+.prof-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:12.5px;border-bottom:1px solid var(--bd)}
+.prof-row:last-child{border-bottom:none}
+
+/* ── MODALS ── */
+.modal-bd{position:fixed;inset:0;background:rgba(15,13,46,.4);z-index:50;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.modal-box{background:var(--bg);border-radius:var(--rxl);padding:26px 30px;width:100%;max-width:400px;box-shadow:var(--shadow-lg)}
+.modal-title{font-size:16px;font-weight:700;color:var(--tx);margin-bottom:8px;letter-spacing:-.2px}
+.modal-sub{font-size:13px;color:var(--tx2);line-height:1.55;margin-bottom:22px}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:22px;right:22px;background:var(--indigo-900);color:#fff;padding:11px 18px;border-radius:var(--rl);font-size:13px;z-index:99;box-shadow:var(--shadow-lg);max-width:360px;transform:translateY(80px);opacity:0;transition:all .3s;border-left:3px solid var(--emerald-500);font-weight:500}
+#toast.show{transform:translateY(0);opacity:1}
+#toast.err{background:#991b1b;border-left-color:#fca5a5}
+#toast.ok{background:#065f46;border-left-color:var(--emerald-500)}
+
+/* ── PAYMENT SIDEBAR ── */
+.pay-sidebar{position:fixed;top:0;right:0;height:100vh;width:380px;background:var(--bg);z-index:45;box-shadow:-8px 0 40px rgba(0,0,0,.15);transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column}
+.pay-sidebar.open{transform:translateX(0)}
+.pay-opts{display:flex;gap:10px;margin-bottom:16px}
+.pay-opt{flex:1;border:2px solid var(--bd);border-radius:var(--rl);padding:14px;cursor:pointer;transition:all .15s;text-align:center}
+.pay-opt:hover{border-color:var(--indigo-600)}
+.pay-opt.sel{border-color:var(--indigo-600);background:rgba(67,56,202,.05)}
+.pay-opt-title{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:4px}
+.pay-opt-sub{font-size:11px;color:var(--tx2)}
+
+/* ── REPORTS ── */
+.report-builder{display:grid;grid-template-columns:280px 1fr;gap:16px;height:100%}
+.report-fields{background:var(--bg);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;display:flex;flex-direction:column}
+.report-preview{background:var(--bg);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden;display:flex;flex-direction:column}
+.field-group{padding:10px 14px;border-bottom:1px solid var(--bd)}
+.field-group-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);margin-bottom:8px}
+.field-item{display:flex;align-items:center;gap:8px;padding:5px 0;cursor:pointer}
+.field-item label{font-size:12.5px;color:var(--tx);cursor:pointer;flex:1;font-weight:500}
+.field-item input[type=checkbox]{width:14px;height:14px;accent-color:var(--indigo-600);cursor:pointer}
+.report-chart-area{flex:1;padding:20px;overflow-y:auto}
+.chart-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.chart-bar-label{width:110px;font-size:11.5px;color:var(--tx2);text-align:right;flex-shrink:0}
+.chart-bar-track{flex:1;background:var(--bg3);border-radius:20px;height:20px;overflow:hidden}
+.chart-bar-fill{height:100%;border-radius:20px;display:flex;align-items:center;padding-left:8px;font-size:10px;font-weight:700;color:#fff}
+
+/* ── PROOF CHOICES ── */
+.proof-choices{display:flex;gap:10px;margin-bottom:12px}
+.proof-choice{flex:1;border:2px solid var(--bd);border-radius:var(--rl);padding:12px 14px;cursor:pointer;transition:all .15s}
+.proof-choice:hover{border-color:var(--indigo-600)}
+.proof-choice.sel{border-color:var(--indigo-600);background:rgba(67,56,202,.05)}
+.proof-choice-title{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:3px}
+.proof-choice-sub{font-size:11px;color:var(--tx2)}
+
+/* ── UTILS ── */
+.flex{display:flex}.fca{align-items:center}.jb{justify-content:space-between}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}
+.sep{height:1px;background:var(--bd);margin:14px 0}
+.muted{color:var(--tx2);font-size:11.5px}
+.mono{font-family:var(--mono)}
+</style>
+</head>
+<body>
+<!-- AUTH -->
+<div id="auth-wrap">
+<div id="sc-login" class="abg">
+  <div class="acard">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:26px">
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="10" fill="url(#lg1)"/><defs><linearGradient id="lg1" x1="0" y1="0" x2="40" y2="40"><stop offset="0%" stop-color="#1e1b4b"/><stop offset="100%" stop-color="#312e81"/></linearGradient></defs><rect x="10" y="9" width="13" height="18" rx="2.5" fill="#e0e7ff"/><path d="M23 9L28 14H23V9Z" fill="#a5b4fc"/><line x1="13" y1="15.5" x2="20.5" y2="15.5" stroke="#059669" stroke-width="1.8" stroke-linecap="round"/><line x1="13" y1="19" x2="20.5" y2="19" stroke="#059669" stroke-width="1.8" stroke-linecap="round"/><line x1="13" y1="22" x2="16.5" y2="22" stroke="#059669" stroke-width="1.8" stroke-linecap="round"/><path d="M24 21.5L30 21.5M27 18.5L30 21.5L27 24.5" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div><div style="font-size:18px;font-weight:800;color:var(--tx);letter-spacing:-.5px">InvoFlow</div><div style="font-size:10px;color:var(--tx3);font-weight:500;letter-spacing:.05em">INVOICE MANAGEMENT PLATFORM</div></div>
+    </div>
+    <div class="atitle">Welcome back</div>
+    <div class="asub">Sign in to your account to continue</div>
+    <div class="fld"><label>Email address</label><input id="l-email" type="email" placeholder="you@invoflow.com"></div>
+    <div class="fld"><label>Password</label><input id="l-pass" type="password" placeholder="••••••••"></div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:16px"><button class="lnk" onclick="showForgot()">Forgot password?</button></div>
+    <button class="pbtn" onclick="doLogin()">Sign In</button>
+    <div class="demo-hint"><b>Demo — click to auto-fill:</b><br>
+      <span class="demo-role" onclick="fillDemo('finance')">Finance Lead</span>
+      <span class="demo-role" onclick="fillDemo('bizzops')">Bizzops Manager</span>
+      <span class="demo-role" onclick="fillDemo('po')">Project Owner</span>
+      <span class="demo-role" onclick="fillDemo('am')">Account Manager</span>
+    </div>
+  </div>
+</div>
+<div id="sc-2fa" class="abg h">
+  <div class="acard">
+    <button class="backbtn" onclick="show2faBack()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back</button>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:26px"><svg width="40" height="40" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="10" fill="url(#lg2)"/><defs><linearGradient id="lg2" x1="0" y1="0" x2="40" y2="40"><stop offset="0%" stop-color="#1e1b4b"/><stop offset="100%" stop-color="#312e81"/></linearGradient></defs><rect x="10" y="9" width="13" height="18" rx="2.5" fill="#e0e7ff"/><path d="M23 9L28 14H23V9Z" fill="#a5b4fc"/><path d="M24 21.5L30 21.5M27 18.5L30 21.5L27 24.5" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><div style="font-size:18px;font-weight:800;color:var(--tx);letter-spacing:-.5px">InvoFlow</div></div></div>
+    <div class="atitle">Two-Factor Authentication</div>
+    <div class="asub">Enter the 6-digit code sent to <span id="tfa-email" style="font-weight:600;color:var(--tx)"></span></div>
+    <div class="otp-row"><input class="otpinp" maxlength="1" id="o1" oninput="oNext(this,'o2')" onkeydown="oPrev(event,'',this)"><input class="otpinp" maxlength="1" id="o2" oninput="oNext(this,'o3')" onkeydown="oPrev(event,'o1',this)"><input class="otpinp" maxlength="1" id="o3" oninput="oNext(this,'o4')" onkeydown="oPrev(event,'o2',this)"><input class="otpinp" maxlength="1" id="o4" oninput="oNext(this,'o5')" onkeydown="oPrev(event,'o3',this)"><input class="otpinp" maxlength="1" id="o5" oninput="oNext(this,'o6')" onkeydown="oPrev(event,'o4',this)"><input class="otpinp" maxlength="1" id="o6" oninput="oNext(this,'')" onkeydown="oPrev(event,'o5',this)"></div>
+    <div class="timer-row"><span>Expires in <b id="otp-timer">01:59</b></span><button class="rsbtn" id="resend-btn" disabled onclick="resendOTP()">Resend</button></div>
+    <button class="pbtn" onclick="verifyOTP()">Verify &amp; Sign In</button>
+    <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--tx3)">Demo: enter any 6 digits</div>
+  </div>
+</div>
+<div id="sc-forgot" class="abg h">
+  <div class="acard">
+    <button class="backbtn" onclick="showLogin()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back to Login</button>
+    <div class="atitle">Reset Password</div><div class="asub">Enter your email and we'll send a reset link.</div>
+    <div class="fld"><label>Email address</label><input id="fp-email" type="email" placeholder="you@invoflow.com"></div>
+    <button class="pbtn" onclick="sendReset()">Send Reset Link</button>
+  </div>
+</div>
+<div id="sc-reset" class="abg h">
+  <div class="acard"><div class="okbx">Reset link sent! Check your inbox.</div><button class="pbtn" onclick="showLogin()">Back to Login</button></div>
+</div>
+</div>
+
+<!-- APP -->
+<div id="app-wrap" class="h">
+<div class="shell">
+<aside class="sidebar">
+  <div class="s-logo">
+    <svg width="32" height="32" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="10" fill="url(#slg)"/><defs><linearGradient id="slg" x1="0" y1="0" x2="40" y2="40"><stop offset="0%" stop-color="#059669"/><stop offset="100%" stop-color="#10b981"/></linearGradient></defs><rect x="10" y="9" width="13" height="18" rx="2.5" fill="#0f172a"/><path d="M23 9L28 14H23V9Z" fill="#065f46"/><line x1="13" y1="15.5" x2="20.5" y2="15.5" stroke="#34d399" stroke-width="1.8" stroke-linecap="round"/><line x1="13" y1="19" x2="20.5" y2="19" stroke="#34d399" stroke-width="1.8" stroke-linecap="round"/><path d="M24 21.5L30 21.5M27 18.5L30 21.5L27 24.5" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div><div class="s-logo-text">InvoFlow</div><div style="font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.06em;font-weight:500">v3.0</div></div>
+  </div>
+  <div class="ssec">Main</div>
+  <button class="ni on" id="ni-home" onclick="showMain('home',this)"><span class="ni-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>Home</button>
+  <button class="ni" id="ni-inv" onclick="showMain('inv',this)"><span class="ni-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>Invoice Dashboard<span class="nbadge">8</span></button>
+  <button class="ni" id="ni-bm" onclick="showMain('bm',this)"><span class="ni-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg></span>BM Overview</button>
+  <button class="ni" id="ni-az" onclick="showMain('az',this)"><span class="ni-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></span>AZ Overview</button>
+  <button class="ni" id="ni-pay" onclick="showMain('pay',this)"><span class="ni-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></span>Payment Dashboard</button>
+  <button class="ni" id="ni-reports" onclick="showMain('reports',this)"><span class="ni-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>Reports</button>
+  <div class="s-foot">
+    <div class="s-user" onclick="openProfile()">
+      <div class="uav" id="s-av">EL</div>
+      <div style="flex:1;min-width:0"><div style="font-size:11.5px;font-weight:600;color:rgba(255,255,255,.85);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="s-uname">Emma L.</div><div style="font-size:10px;color:rgba(255,255,255,.35);font-weight:500" id="s-urole">Finance Lead</div></div>
+      <button class="s-logout" onclick="event.stopPropagation();openModal('modal-logout')" title="Sign out"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
+    </div>
+  </div>
+</aside>
+
+<div class="cnt">
+  <div class="topbar">
+    <div><div class="ptitle" id="tb-title">Home</div><div class="psub" id="tb-sub">Welcome back, Emma L.</div></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button class="btn-icon" onclick="openProfile()" title="Profile"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button>
+    </div>
+  </div>
+  <!-- HOME -->
+  <div id="sc-home" class="screen">
+    <div id="home-finance" class="scr">
+      <div class="statrow st4">
+        <div class="sc" onclick="showMain('pay',document.getElementById('ni-pay'))"><div class="sl">Awaiting Payment Notif.</div><div class="sv" style="color:var(--amber-600)">4</div><div class="sd gw">INV-007, 008, 010, 013</div></div>
+        <div class="sc" onclick="showMain('pay',document.getElementById('ni-pay'))"><div class="sl">Payments Closed</div><div class="sv" style="color:var(--emerald-600)">1</div><div class="sd gu">INV-2026-011 · TechNova</div></div>
+        <div class="sc"><div class="sl">Awaiting Bank Entry</div><div class="sv">0</div><div class="sd">No pending entries</div></div>
+        <div class="sc"><div class="sl">Payment Invalid</div><div class="sv" style="color:var(--red-600)">0</div><div class="sd gr">No mismatches detected</div></div>
+      </div>
+      <div class="twocol">
+        <div class="card"><div class="ch"><span class="ct">Weekly Invoice Forecast</span><span class="muted" style="font-size:11px">Week of Apr 7, 2026</span></div>
+          <table class="tbl"><thead><tr><th>Invoice</th><th>Customer</th><th>Amount</th><th>Expected Payment</th><th>Status</th></tr></thead><tbody>
+            <tr><td class="mono">INV-2026-007</td><td>Sigma Ltd</td><td class="mono">£ 6,000</td><td>Apr 15, 2026</td><td><span class="pill aw">Awaiting Notif.</span></td></tr>
+            <tr><td class="mono">INV-2026-008</td><td>Sigma Ltd</td><td class="mono">£ 6,500</td><td>Apr 20, 2026</td><td><span class="pill aw">Awaiting Notif.</span></td></tr>
+            <tr><td class="mono">INV-2026-010</td><td>TechNova SA</td><td class="mono">CHF 7,000</td><td>Apr 10, 2026</td><td><span class="pill aw">Awaiting Notif.</span></td></tr>
+            <tr><td class="mono">INV-2026-011</td><td>TechNova SA</td><td class="mono">CHF 7,000</td><td>Mar 28, 2026</td><td><span class="pill closed">Closed</span></td></tr>
+            <tr><td class="mono">INV-2026-012</td><td>RedCloud BV</td><td class="mono">€ 4,000</td><td>Apr 25, 2026</td><td><span class="pill failed">Failed</span></td></tr>
+            <tr><td class="mono">INV-2026-013</td><td>RedCloud BV</td><td class="mono">€ 4,500</td><td>Apr 28, 2026</td><td><span class="pill aw">Awaiting Notif.</span></td></tr>
+          </tbody></table>
+        </div>
+        <div class="card"><div class="ch"><span class="ct">Recent Alerts</span></div>
+          <div class="tli"><div class="tld" style="background:var(--emerald-500)"></div><div><div style="font-size:12px;font-weight:600">Payment Received — INV-2026-011</div><div style="font-size:11px;color:var(--tx2);margin-top:1px">TechNova SA · CHF 7,000 · Mar 28, 2026</div></div></div>
+          <div class="tli"><div class="tld" style="background:var(--red-600)"></div><div><div style="font-size:12px;font-weight:600">Invoice Failed — INV-2026-012</div><div style="font-size:11px;color:var(--tx2);margin-top:1px">RedCloud BV · € 4,000 · Customer rejection</div></div></div>
+          <div class="tli"><div class="tld" style="background:var(--red-600)"></div><div><div style="font-size:12px;font-weight:600">Jira Sync Error — INV-2026-005</div><div style="font-size:11px;color:var(--tx2);margin-top:1px">Delta GmbH · Human intervention required</div></div></div>
+          <div class="tli"><div class="tld" style="background:var(--amber-500)"></div><div><div style="font-size:12px;font-weight:600">Payment Due Soon — INV-2026-010</div><div style="font-size:11px;color:var(--tx2);margin-top:1px">TechNova SA · CHF 7,000 · Due Apr 10</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div id="home-bizzops" class="scr h">
+      <div class="statrow st4">
+        <div class="sc" onclick="showMain('inv',document.getElementById('ni-inv'));setTimeout(function(){openInvDetail('INV-2026-009')},200)"><div class="sl">Awaiting Signature</div><div class="sv" style="color:var(--indigo-600)">1</div><div class="sd" style="color:var(--indigo-600)">Additional reports</div></div>
+        <div class="sc" onclick="showMain('inv',document.getElementById('ni-inv'));setTimeout(function(){openInvDetail('INV-2026-008')},200)"><div class="sl">Awaiting Confirmation</div><div class="sv" style="color:var(--indigo-600)">1</div><div class="sd" style="color:var(--indigo-600)">Invoice templates</div></div>
+        <div class="sc" onclick="showMain('inv',document.getElementById('ni-inv'));setTimeout(function(){openInvDetail('INV-2026-003')},200)"><div class="sl">Proof Validations</div><div class="sv" style="color:var(--amber-600)">1</div><div class="sd gw">New date proofs</div></div>
+        <div class="sc" onclick="showMain('inv',document.getElementById('ni-inv'));setTimeout(function(){openInvDetail('INV-2026-005')},200)"><div class="sl">Sync Errors</div><div class="sv" style="color:var(--red-600)">1</div><div class="sd gr">Human intervention req.</div></div>
+      </div>
+      <div class="twocol">
+        <div class="card"><div class="ch"><span class="ct">Pending Actions</span></div>
+          <div class="tli"><div class="tld" style="background:var(--indigo-600)"></div><div><div style="font-size:12px;font-weight:600">Sign Additional Report — INV-2026-009</div><div style="font-size:11px;color:var(--tx2);margin-top:1px">TechNova SA · 2 reminders sent</div><div style="margin-top:5px"><button class="btn biz sm" onclick="showMain('inv',document.getElementById('ni-inv'));setTimeout(function(){openInvDetail('INV-2026-009')},200)">Open &amp; Sign</button></div></div></div>
+          <div class="tli"><div class="tld" style="background:var(--indigo-600)"></div><div><div style="font-size:12px;font-weight:600">Confirm Invoice — INV-2026-008</div><div style="font-size:11px;color:var(--tx2);margin-top:1px">Sigma Ltd · 2 reminders sent</div><div style="margin-top:5px"><button class="btn biz sm" onclick="showMain('inv',document.getElementById('ni-inv'));setTimeout(function(){openInvDetail('INV-2026-008')},200)">Open &amp; Confirm</button></div></div></div>
+          <div class="tli"><div class="tld" style="background:var(--amber-500)"></div><div><div style="font-size:12px;font-weight:600">Validate Date Proof — INV-2026-003</div><div style="font-size:11px;color:var(--tx2);margin-top:1px">BetaCorp GmbH · Proof uploaded by PO</div><div style="margin-top:5px"><button class="btn warn sm" onclick="showMain('inv',document.getElementById('ni-inv'));setTimeout(function(){openInvDetail('INV-2026-003')},200)">Validate Proof</button></div></div></div>
+          <div class="tli"><div class="tld" style="background:var(--red-600)"></div><div><div style="font-size:12px;font-weight:600">Jira Sync Error — INV-2026-005</div><div style="font-size:11px;color:var(--tx2);margin-top:1px">Delta GmbH · Human intervention required</div><div style="margin-top:5px"><button class="btn danger sm" onclick="showMain('inv',document.getElementById('ni-inv'));setTimeout(function(){openInvDetail('INV-2026-005')},200)">View Error</button></div></div></div>
+        </div>
+        <div class="card"><div class="ch"><span class="ct">Recent Activity</span></div>
+          <div class="tli"><div class="tld" style="background:var(--emerald-500)"></div><div><div style="font-size:12px;font-weight:600">Invoice Confirmed — INV-2026-011</div><div style="font-size:11px;color:var(--tx2);margin-top:1px">TechNova SA · Closed Apr 1, 2026</div></div></div>
+          <div class="tli"><div class="tld" style="background:var(--emerald-500)"></div><div><div style="font-size:12px;font-weight:600">Report Signed — INV-2026-013</div><div style="font-size:11px;color:var(--tx2);margin-top:1px">RedCloud BV · Sent Mar 28, 2026</div></div></div>
+          <div class="tli"><div class="tld" style="background:var(--amber-500)"></div><div><div style="font-size:12px;font-weight:600">BM Date Proof Received</div><div style="font-size:11px;color:var(--tx2);margin-top:1px">INV-2026-003 · BetaCorp · Awaiting validation</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div id="home-po" class="scr h">
+      <div class="statrow st4">
+        <div class="sc" onclick="showMain('bm',document.getElementById('ni-bm'))"><div class="sl">Active BMs</div><div class="sv">7</div><div class="sd gu">1 open · 6 closed</div></div>
+        <div class="sc" onclick="showMain('inv',document.getElementById('ni-inv'))"><div class="sl">Overdue Tickets</div><div class="sv" style="color:var(--red-600)">2</div><div class="sd gr">INV-002 · INV-003</div></div>
+        <div class="sc" onclick="showMain('inv',document.getElementById('ni-inv'))"><div class="sl">BM Limit Exceeded</div><div class="sv" style="color:var(--amber-600)">1</div><div class="sd gw">BM-BETA-2026-02</div></div>
+        <div class="sc" onclick="showMain('inv',document.getElementById('ni-inv'))"><div class="sl">Approvals Pending</div><div class="sv" style="color:var(--amber-600)">1</div><div class="sd gw">Customer approvals</div></div>
+      </div>
+      <div class="twocol">
+        <div class="card"><div class="ch"><span class="ct">Action Required</span></div>
+          <div class="tli"><div class="tld" style="background:var(--red-600)"></div><div><div style="font-size:12px;font-weight:600">Overdue Ticket — INV-2026-002</div><div style="font-size:11px;color:var(--tx2);margin-top:1px">Acme AG · ACME-1002, 1003 past Mar 31</div><div style="margin-top:5px"><button class="btn danger sm" onclick="showMain('inv',document.getElementById('ni-inv'));setTimeout(function(){openInvDetail('INV-2026-002')},200)">Propose New BM Date</button></div></div></div>
+          <div class="tli"><div class="tld" style="background:var(--amber-500)"></div><div><div style="font-size:12px;font-weight:600">BM Limit Exceeded — INV-2026-004</div><div style="font-size:11px;color:var(--tx2);margin-top:1px">BetaCorp GmbH · Exceeded by € 1,500</div><div style="margin-top:5px"><button class="btn warn sm" onclick="showMain('inv',document.getElementById('ni-inv'));setTimeout(function(){openInvDetail('INV-2026-004')},200)">Modify BM Limit</button></div></div></div>
+          <div class="tli"><div class="tld" style="background:var(--amber-500)"></div><div><div style="font-size:12px;font-weight:600">Upload Customer Approval — INV-2026-006</div><div style="font-size:11px;color:var(--tx2);margin-top:1px">Delta GmbH · Report sent to Lars Weber</div><div style="margin-top:5px"><button class="btn warn sm" onclick="showMain('inv',document.getElementById('ni-inv'));setTimeout(function(){openInvDetail('INV-2026-006')},200)">Upload Approval</button></div></div></div>
+        </div>
+        <div class="card"><div class="ch"><span class="ct">My Jira Tickets</span></div>
+          <table class="tbl"><thead><tr><th>Ticket</th><th>BM</th><th>Due</th><th>Status</th></tr></thead><tbody>
+            <tr><td class="mono">ACME-1001</td><td>BM-01</td><td>Mar 31</td><td><span class="pill delivered">Delivered</span></td></tr>
+            <tr><td class="mono">ACME-1002</td><td>BM-01</td><td>Mar 31</td><td><span class="pill overdue">Overdue</span></td></tr>
+            <tr><td class="mono">BETA-2001</td><td>BM-02</td><td>Apr 15</td><td><span class="pill overdue">Overdue</span></td></tr>
+            <tr><td class="mono">DELT-3003</td><td>BM-03</td><td>Apr 30</td><td><span class="pill delivered">Delivered</span></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+    </div>
+    <div id="home-am" class="scr h">
+      <div class="statrow st5">
+        <div class="sc" onclick="showMain('az',document.getElementById('ni-az'))"><div class="sl">Active AZs</div><div class="sv">6</div><div class="sd gu">All open</div></div>
+        <div class="sc" onclick="showMain('bm',document.getElementById('ni-bm'))"><div class="sl">Active BMs</div><div class="sv">7</div><div class="sd gu">1 open · 6 closed</div></div>
+        <div class="sc" onclick="showMain('az',document.getElementById('ni-az'))"><div class="sl">Total AZ Value</div><div class="sv" style="font-size:16px;color:var(--indigo-600)">€223k+</div><div class="sd gw">Multi-currency</div></div>
+        <div class="sc" onclick="showMain('inv',document.getElementById('ni-inv'))"><div class="sl">Invoices In Progress</div><div class="sv">13</div><div class="sd gw">4 need attention</div></div>
+        <div class="sc" onclick="showMain('inv',document.getElementById('ni-inv'))"><div class="sl">Error Invoices</div><div class="sv" style="color:var(--red-600)">4</div><div class="sd gr">Requiring action</div></div>
+      </div>
+      <div class="twocol">
+        <div class="card"><div class="ch"><span class="ct">Alerts &amp; Notifications</span></div>
+          <div class="tli"><div class="tld" style="background:var(--emerald-500)"></div><div><div style="font-size:12px;font-weight:600">New Open BM — BM-2026-07</div><div style="font-size:11px;color:var(--tx2);margin-top:1px">BetaCorp GmbH · € 14,000 · Ready for invoicing</div><div style="margin-top:5px"><button class="btn p sm" onclick="showMain('bm',document.getElementById('ni-bm'))">View BM</button></div></div></div>
+          <div class="tli"><div class="tld" style="background:var(--amber-500)"></div><div><div style="font-size:12px;font-weight:600">BM Limit Exceeded — BM-BETA-2026-02</div><div style="font-size:11px;color:var(--tx2);margin-top:1px">BetaCorp GmbH · PO handling · Awareness only</div></div></div>
+          <div class="tli"><div class="tld" style="background:var(--red-600)"></div><div><div style="font-size:12px;font-weight:600">Overdue Tickets — INV-002, 003</div><div style="font-size:11px;color:var(--tx2);margin-top:1px">Acme AG + BetaCorp · PO handling new date proposals</div></div></div>
+        </div>
+        <div class="card"><div class="ch"><span class="ct">AZ Status Overview</span></div>
+          <table class="tbl"><thead><tr><th>AZ</th><th>Customer</th><th>Opened</th></tr></thead><tbody>
+            <tr><td class="mono" style="font-size:11px">AZ-2026-01</td><td>Acme AG</td><td><span class="pill open">22.5%</span></td></tr>
+            <tr><td class="mono" style="font-size:11px">AZ-2026-02</td><td>BetaCorp</td><td><span class="pill pending">45.8%</span></td></tr>
+            <tr><td class="mono" style="font-size:11px">AZ-2026-03</td><td>Delta GmbH</td><td><span class="pill open">22.2%</span></td></tr>
+            <tr><td class="mono" style="font-size:11px">AZ-2026-04</td><td>Sigma Ltd</td><td><span class="pill open">22.7%</span></td></tr>
+            <tr><td class="mono" style="font-size:11px">AZ-2026-05</td><td>TechNova</td><td><span class="pill open">22.1%</span></td></tr>
+            <tr><td class="mono" style="font-size:11px">AZ-2026-06</td><td>RedCloud</td><td><span class="pill open">22.4%</span></td></tr>
+          </tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INVOICE DASHBOARD -->
+  <div id="sc-inv" class="screen h">
+    <div class="inv-layout">
+      <div class="inv-top-row">
+        <div class="inv-pie-card">
+          <svg width="100" height="100" viewBox="0 0 100 100" id="pie-svg"></svg>
+          <div class="pie-legend">
+            <div class="pie-li"><span class="pie-dot" style="background:var(--amber-500)"></span>Pending <b style="margin-left:auto;padding-left:10px;font-family:var(--mono)">5</b></div>
+            <div class="pie-li"><span class="pie-dot" style="background:var(--red-600)"></span>Error <b style="margin-left:auto;padding-left:10px;font-family:var(--mono)">4</b></div>
+            <div class="pie-li"><span class="pie-dot" style="background:var(--blue-600)"></span>Sent <b style="margin-left:auto;padding-left:10px;font-family:var(--mono)">2</b></div>
+            <div class="pie-li"><span class="pie-dot" style="background:var(--emerald-500)"></span>Closed <b style="margin-left:auto;padding-left:10px;font-family:var(--mono)">1</b></div>
+            <div class="pie-li"><span class="pie-dot" style="background:#ec4899"></span>Failed <b style="margin-left:auto;padding-left:10px;font-family:var(--mono)">1</b></div>
+            <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--bd);font-size:11.5px;font-weight:700;color:var(--tx)">Total: 13 invoices</div>
+          </div>
+        </div>
+        <div class="inv-hint-card">
+          <div class="inv-hint-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--indigo-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+          <div><div class="inv-hint-text">Add or manage <strong>AZ &amp; BM records</strong> directly from the Customer table — use the <span class="inv-hint-badge"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--indigo-600)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> edit</span> icon next to each customer, or click <span class="inv-hint-badge"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--indigo-600)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Customer</span> to onboard a new client.</div></div>
+        </div>
+      </div>
+      <div class="inv-tables-row">
+        <div class="panel">
+          <div class="ph"><span class="ph-title">Invoice Overview — 13 Records</span></div>
+          <div id="cust-active-filter" style="padding:6px 14px;background:rgba(67,56,202,.06);display:none;font-size:11.5px;color:var(--indigo-700);border-bottom:1px solid var(--bd)">
+            Filtered by: <b id="cust-filter-name"></b> &nbsp;<button class="btn ghost sm" onclick="clearCF()">✕ Clear</button>
+          </div>
+          <div class="panel-body">
+            <table class="tbl"><thead>
+              <tr>
+                <th><div>Invoice #</div><input class="col-filter" placeholder="Filter..." oninput="renderInvoices()" id="cf-inv-id"></th>
+                <th><div>Jira Ticket(s)</div><input class="col-filter" placeholder="Filter..." oninput="renderInvoices()" id="cf-jira"></th>
+                <th><div>AZ Customer #</div><input class="col-filter" placeholder="Filter..." oninput="renderInvoices()" id="cf-az"></th>
+                <th><div>BM Customer #</div><input class="col-filter" placeholder="Filter..." oninput="renderInvoices()" id="cf-bm"></th>
+                <th><div>BM End Date</div><input class="col-filter" placeholder="Filter..." oninput="renderInvoices()" id="cf-bmend"></th>
+                <th><div>Invoice Status</div><select class="col-filter-sel" onchange="renderInvoices()" id="cf-is"><option value="">All</option><option>Pending</option><option>Error</option><option>Sent</option><option>Closed</option><option>Failed</option></select></th>
+                <th><div>Jira Status</div><select class="col-filter-sel" onchange="renderInvoices()" id="cf-js"><option value="">All</option><option>Delivered</option><option>Overdue</option><option>On Time</option></select></th>
+                <th><div>Created</div><input class="col-filter" placeholder="Filter..." oninput="renderInvoices()" id="cf-created"></th>
+              </tr>
+            </thead><tbody id="inv-tbody"></tbody></table>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="ph"><span class="ph-title">Customers</span><button class="btn sky sm" onclick="openCustAdd()"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Customer</button></div>
+          <div style="padding:7px 10px;border-bottom:1px solid var(--bd)"><input id="cust-search" placeholder="Search customers..." style="width:100%;padding:5px 9px;border:1.5px solid var(--bd);border-radius:6px;font-size:11.5px;font-family:var(--font)" oninput="renderCustomers()"></div>
+          <div class="panel-body"><table class="tbl"><thead><tr><th>Customer</th><th>ID</th><th></th></tr></thead><tbody id="cust-tbody"></tbody></table></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BM OVERVIEW -->
+  <div id="sc-bm" class="screen h">
+    <div class="scr">
+      <div class="panel" id="bm-panel">
+        <div class="ph"><span class="ph-title" id="bm-panel-title">BM Overview — 7 Records</span><div id="bm-split-banner" style="display:none"><span class="pill pending" style="font-size:11px">Split BM Mode</span>&nbsp;<button class="btn sm" onclick="exitSplitMode()">Exit</button></div></div>
+        <div class="panel-body"><table class="tbl"><thead>
+          <tr>
+            <th><div>Internal BM #</div><input class="col-filter" placeholder="Filter..." oninput="renderBMs()" id="cf-bm-id"></th>
+            <th><div>Customer BM #</div><input class="col-filter" placeholder="Filter..." oninput="renderBMs()" id="cf-bm-cid"></th>
+            <th><div>Customer</div><select class="col-filter-sel" onchange="renderBMs()" id="cf-bm-cust"><option value="">All</option><option>Acme AG</option><option>BetaCorp GmbH</option><option>Delta GmbH</option><option>Sigma Ltd</option><option>TechNova SA</option><option>RedCloud BV</option></select></th>
+            <th><div>AZ #</div><input class="col-filter" placeholder="Filter..." oninput="renderBMs()" id="cf-bm-az"></th>
+            <th><div>Topic</div><input class="col-filter" placeholder="Filter..." oninput="renderBMs()" id="cf-bm-topic"></th>
+            <th><div>Billing</div><select class="col-filter-sel" onchange="renderBMs()" id="cf-bm-bill"><option value="">All</option><option>Story Point</option><option>Workpackage</option></select></th>
+            <th><div>AM</div><select class="col-filter-sel" onchange="renderBMs()" id="cf-bm-am"><option value="">All</option><option>Sara K.</option><option>Anna B.</option><option>Tom B.</option></select></th>
+            <th><div>PO</div><select class="col-filter-sel" onchange="renderBMs()" id="cf-bm-po"><option value="">All</option><option>Alissar A.</option><option>Maria K.</option><option>Marco M.</option></select></th>
+            <th><div>Start</div><input class="col-filter" placeholder="Filter..." oninput="renderBMs()" id="cf-bm-start"></th>
+            <th><div>Due Date</div><input class="col-filter" placeholder="Filter..." oninput="renderBMs()" id="cf-bm-due"></th>
+            <th><div>Amount</div></th>
+            <th><div>Opened Amt</div></th>
+            <th><div>% Opened</div></th>
+            <th><div>Status</div><select class="col-filter-sel" onchange="renderBMs()" id="cf-bm-st"><option value="">All</option><option>Open</option><option>Closed</option></select></th>
+            <th></th>
+          </tr>
+        </thead><tbody id="bm-tbody"></tbody></table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AZ OVERVIEW -->
+  <div id="sc-az" class="screen h">
+    <div class="scr">
+      <div class="panel">
+        <div class="ph"><span class="ph-title">AZ Overview — 6 Records (All Open)</span></div>
+        <div class="panel-body"><table class="tbl"><thead>
+          <tr>
+            <th><div>Internal AZ #</div><input class="col-filter" placeholder="Filter..." oninput="renderAZs()" id="cf-az-id"></th>
+            <th><div>Customer AZ #</div><input class="col-filter" placeholder="Filter..." oninput="renderAZs()" id="cf-az-cid"></th>
+            <th><div>Customer</div><select class="col-filter-sel" onchange="renderAZs()" id="cf-az-cust"><option value="">All</option><option>Acme AG</option><option>BetaCorp GmbH</option><option>Delta GmbH</option><option>Sigma Ltd</option><option>TechNova SA</option><option>RedCloud BV</option></select></th>
+            <th><div>Title</div><input class="col-filter" placeholder="Filter..." oninput="renderAZs()" id="cf-az-title"></th>
+            <th><div>Start</div></th>
+            <th><div>End</div></th>
+            <th><div>Currency</div><select class="col-filter-sel" onchange="renderAZs()" id="cf-az-cur"><option value="">All</option><option>EUR</option><option>GBP</option><option>CHF</option></select></th>
+            <th><div>Amount</div></th>
+            <th><div>Opened %</div></th>
+            <th><div>AM</div><select class="col-filter-sel" onchange="renderAZs()" id="cf-az-am"><option value="">All</option><option>Sara K.</option><option>Anna B.</option><option>Tom B.</option></select></th>
+            <th></th>
+          </tr>
+        </thead><tbody id="az-tbody"></tbody></table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAYMENT DASHBOARD -->
+  <div id="sc-pay" class="screen h">
+    <div class="scr">
+      <div class="statrow" style="grid-template-columns:repeat(5,1fr)">
+        <div class="sc"><div class="sl">Total in Pipeline</div><div class="sv">6</div><div class="sd gw">Sent invoices</div></div>
+        <div class="sc"><div class="sl">Awaiting Notification</div><div class="sv" style="color:var(--amber-600)">4</div><div class="sd gw">PDFs needed</div></div>
+        <div class="sc"><div class="sl">Awaiting Bank Entry</div><div class="sv">0</div><div class="sd">No pending entries</div></div>
+        <div class="sc"><div class="sl">Closed</div><div class="sv" style="color:var(--emerald-600)">1</div><div class="sd gu">INV-2026-011</div></div>
+        <div class="sc"><div class="sl">Failed</div><div class="sv" style="color:var(--red-600)">1</div><div class="sd gr">INV-2026-012</div></div>
+      </div>
+      <div class="panel">
+        <div class="ph"><span class="ph-title">Payment Tickets</span></div>
+        <div class="panel-body"><table class="tbl"><thead><tr><th>Invoice #</th><th>Customer</th><th>AZ #</th><th>BM #</th><th>Expected Amount</th><th>Sent Date</th><th>Expected Payment</th><th>Payment Notif. Date</th><th>Payment PDF</th><th>Bank Entry</th><th>Status</th></tr></thead><tbody id="pay-tbody"></tbody></table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REPORTS -->
+  <div id="sc-reports" class="screen h">
+    <div class="scr" style="display:flex;flex-direction:column;height:100%">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div><div style="font-size:16px;font-weight:700;color:var(--tx);letter-spacing:-.2px">Reports Builder</div><div style="font-size:12px;color:var(--tx3);margin-top:2px">Select fields to generate a customized report</div></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn emerald lg" onclick="generateReport()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Generate Report</button>
+          <button class="btn p lg" onclick="exportPDF()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export PDF</button>
+        </div>
+      </div>
+      <div class="report-builder" style="flex:1;min-height:0">
+        <div class="report-fields">
+          <div class="ph"><span class="ph-title">Select Fields</span><button class="btn ghost sm" onclick="selectAllFields()">Select All</button></div>
+          <div style="overflow-y:auto;flex:1">
+            <div class="field-group"><div class="field-group-title">Invoice Fields</div>
+              <div class="field-item"><input type="checkbox" id="rf-inv-id" checked><label for="rf-inv-id">Invoice Number</label></div>
+              <div class="field-item"><input type="checkbox" id="rf-cust" checked><label for="rf-cust">Customer</label></div>
+              <div class="field-item"><input type="checkbox" id="rf-amt" checked><label for="rf-amt">Invoice Amount</label></div>
+              <div class="field-item"><input type="checkbox" id="rf-status" checked><label for="rf-status">Invoice Status</label></div>
+              <div class="field-item"><input type="checkbox" id="rf-jira"><label for="rf-jira">Jira Tickets</label></div>
+              <div class="field-item"><input type="checkbox" id="rf-jira-st"><label for="rf-jira-st">Jira Status</label></div>
+              <div class="field-item"><input type="checkbox" id="rf-created"><label for="rf-created">Created Date</label></div>
+            </div>
+            <div class="field-group"><div class="field-group-title">BM Fields</div>
+              <div class="field-item"><input type="checkbox" id="rf-bm-id" checked><label for="rf-bm-id">BM Number</label></div>
+              <div class="field-item"><input type="checkbox" id="rf-bm-amt"><label for="rf-bm-amt">BM Amount</label></div>
+              <div class="field-item"><input type="checkbox" id="rf-bm-due"><label for="rf-bm-due">BM Due Date</label></div>
+              <div class="field-item"><input type="checkbox" id="rf-bm-status"><label for="rf-bm-status">BM Status</label></div>
+              <div class="field-item"><input type="checkbox" id="rf-bm-topic"><label for="rf-bm-topic">BM Topic</label></div>
+            </div>
+            <div class="field-group"><div class="field-group-title">AZ Fields</div>
+              <div class="field-item"><input type="checkbox" id="rf-az-id"><label for="rf-az-id">AZ Number</label></div>
+              <div class="field-item"><input type="checkbox" id="rf-az-pct" checked><label for="rf-az-pct">AZ Opened %</label></div>
+              <div class="field-item"><input type="checkbox" id="rf-az-amt"><label for="rf-az-amt">AZ Amount</label></div>
+            </div>
+            <div class="field-group"><div class="field-group-title">Team Fields</div>
+              <div class="field-item"><input type="checkbox" id="rf-am"><label for="rf-am">Account Manager</label></div>
+              <div class="field-item"><input type="checkbox" id="rf-po"><label for="rf-po">Project Owner</label></div>
+            </div>
+            <div class="field-group"><div class="field-group-title">Payment Fields</div>
+              <div class="field-item"><input type="checkbox" id="rf-pay-st"><label for="rf-pay-st">Payment Status</label></div>
+              <div class="field-item"><input type="checkbox" id="rf-pay-amt"><label for="rf-pay-amt">Bank Entry Amount</label></div>
+            </div>
+          </div>
+        </div>
+        <div class="report-preview">
+          <div class="ph"><span class="ph-title">Preview</span><span style="font-size:11px;color:var(--tx3)">Generated Apr 07, 2026</span></div>
+          <div class="report-chart-area" id="report-area">
+            <div style="text-align:center;padding:40px 0;color:var(--tx3)">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 12px;display:block"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              <div style="font-size:13px;font-weight:500">Select fields and click Generate Report</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div></div></div>
+
+<!-- BACKDROP -->
+<div class="rp-bd" id="rp-bd" onclick="closeAllPanels()"></div>
+
+<!-- PROFILE PANEL -->
+<div class="rpanel rp-sm" id="panel-profile">
+  <div class="rp-head"><span class="rp-title">My Profile</span><button class="rp-close" onclick="closePanel('panel-profile')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+  <div class="rp-body">
+    <div style="text-align:center;padding:16px 0 10px">
+      <div class="prof-av" id="prof-av">EL</div>
+      <div style="font-size:12px;color:var(--tx3);margin-bottom:6px">Hello, <b id="prof-hello" style="color:var(--tx)">Emma L.</b></div>
+      <div style="font-size:17px;font-weight:700;color:var(--tx);letter-spacing:-.3px" id="prof-name">Emma L.</div>
+      <div style="font-size:12px;color:var(--tx2);margin-top:3px" id="prof-role">Finance Lead · Finance</div>
+    </div>
+    <div class="sep"></div>
+    <div class="prof-row"><span style="color:var(--tx2)">Employee ID</span><span style="font-weight:600;font-family:var(--mono)" id="prof-id">USR-001</span></div>
+    <div class="prof-row"><span style="color:var(--tx2)">Department</span><span style="font-weight:600" id="prof-dept">Finance</span></div>
+    <div class="prof-row"><span style="color:var(--tx2)">Position</span><span style="font-weight:600" id="prof-pos">Finance Lead</span></div>
+    <div class="prof-row"><span style="color:var(--tx2)">Email</span><span id="prof-email" style="font-size:11.5px">emma.l@invoflow.com</span></div>
+    <div class="prof-row"><span style="color:var(--tx2)">Last login</span><span style="font-size:11.5px;font-family:var(--mono)">Apr 7, 2026 · 09:14</span></div>
+    <div class="sep"></div>
+    <button class="btn danger" style="width:100%;justify-content:center" onclick="closePanel('panel-profile');openModal('modal-logout')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</button>
+  </div>
+</div>
+
+<!-- INVOICE DETAIL PANEL -->
+<div class="rpanel rp-lg" id="panel-inv-detail">
+  <div class="rp-head">
+    <div><div class="rp-title mono" id="inv-detail-num">Invoice Detail</div><div style="font-size:11px;color:var(--tx2);margin-top:2px" id="inv-detail-cust"></div></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btn sky sm" onclick="openHistory()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>View History</button>
+      <button class="rp-close" onclick="closePanel('panel-inv-detail')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+  </div>
+  <div class="rp-body" id="inv-detail-body"></div>
+</div>
+
+<!-- HISTORY PANEL -->
+<div class="rpanel rp-sm" id="panel-history" style="z-index:42">
+  <div class="rp-head"><span class="rp-title">Invoice History</span><button class="rp-close" onclick="closePanel('panel-history')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+  <div class="rp-body" id="history-body"></div>
+</div>
+
+<!-- PDF VIEW PANEL -->
+<div class="rpanel rp-lg" id="panel-pdf" style="z-index:43">
+  <div class="rp-head"><span class="rp-title" id="pdf-title">Document</span><button class="rp-close" onclick="closePanel('panel-pdf')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+  <div class="rp-body" id="pdf-body"></div>
+</div>
+
+<!-- PAYMENT UPLOAD SIDEBAR -->
+<div class="pay-sidebar" id="pay-sidebar" style="z-index:44">
+  <div class="rp-head"><span class="rp-title" id="pay-sidebar-title">Payment Notification</span><button class="rp-close" onclick="closePaySidebar()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+  <div class="rp-body" id="pay-sidebar-body"></div>
+</div>
+
+<!-- CUSTOMER SUB-SCREEN -->
+<div class="sub-sc h" id="sub-cust">
+  <div class="sub-head">
+    <button class="btn sm" onclick="closeSub('sub-cust')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back</button>
+    <div><div class="sub-title" id="cust-form-title">Add New Customer</div><div class="sub-sub" id="cust-form-sub">Customer ID auto-generated</div></div>
+  </div>
+  <div class="sub-body" id="cust-form-body"></div>
+</div>
+
+<!-- AZ ADD SUB-SCREEN -->
+<div class="sub-sc h" id="sub-az-add">
+  <div class="sub-head">
+    <button class="btn sm" onclick="closeSub('sub-az-add')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back</button>
+    <div><div class="sub-title">Add AZ Framework Agreement</div><div class="sub-sub">Upload PDF to auto-fill or enter manually</div></div>
+    <div class="mode-tabs" style="margin-left:auto"><button class="mode-tab on" id="az-tab-s" onclick="setAZMode('scan')">PDF Scan</button><button class="mode-tab" id="az-tab-m" onclick="setAZMode('manual')">Manual</button></div>
+  </div>
+  <div class="sub-body" id="az-add-body"></div>
+</div>
+
+<!-- BM ADD SUB-SCREEN -->
+<div class="sub-sc h" id="sub-bm-add">
+  <div class="sub-head">
+    <button class="btn sm" onclick="closeSub('sub-bm-add')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back</button>
+    <div><div class="sub-title">Add BM / Purchase Order</div><div class="sub-sub">Upload PDF to auto-fill or enter manually</div></div>
+    <div class="mode-tabs" style="margin-left:auto"><button class="mode-tab on" id="bm-tab-s" onclick="setBMMode('scan')">PDF Scan</button><button class="mode-tab" id="bm-tab-m" onclick="setBMMode('manual')">Manual</button></div>
+  </div>
+  <div class="sub-body" id="bm-add-body"></div>
+</div>
+
+<!-- INVOICE ADD SUB-SCREEN -->
+<div class="sub-sc h" id="sub-inv-add">
+  <div class="sub-head">
+    <button class="btn sm" onclick="closeSub('sub-inv-add')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back to BM</button>
+    <div><div class="sub-title">Create Invoice Ticket</div><div class="sub-sub" id="inv-add-ref">BM-2026-07 · BetaCorp GmbH</div></div>
+  </div>
+  <div class="sub-body" id="inv-add-body"></div>
+</div>
+
+<!-- BM INTERFACE SUB-SCREEN -->
+<div class="sub-sc h" id="sub-bm-if">
+  <div class="sub-head">
+    <button class="btn sm" id="bm-if-back" onclick="closeBMIF()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg><span id="bm-if-back-lbl">Back</span></button>
+    <div><div class="sub-title" id="bm-if-title">BM Interface</div><div class="sub-sub" id="bm-if-sub"></div></div>
+  </div>
+  <div class="sub-body" id="bm-if-body"></div>
+</div>
+
+<!-- AZ INTERFACE SUB-SCREEN -->
+<div class="sub-sc h" id="sub-az-if">
+  <div class="sub-head">
+    <button class="btn sm" onclick="closeSub('sub-az-if')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Back to AZ Overview</button>
+    <div><div class="sub-title" id="az-if-title">AZ Interface</div><div class="sub-sub" id="az-if-sub"></div></div>
+  </div>
+  <div class="sub-body" id="az-if-body"></div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-bd h" id="modal-logout">
+  <div class="modal-box">
+    <div style="width:44px;height:44px;border-radius:12px;background:var(--red-100);display:flex;align-items:center;justify-content:center;margin-bottom:16px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--red-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+    <div class="modal-title">Sign out of InvoFlow?</div>
+    <div class="modal-sub">Are you sure you would like to log out? You will be redirected to the login screen.</div>
+    <div class="modal-btns"><button class="btn" onclick="closeModal('modal-logout')">Cancel</button><button class="btn danger lg" onclick="doLogout()">Yes, Sign Out</button></div>
+  </div>
+</div>
+<div class="modal-bd h" id="modal-popup">
+  <div class="modal-box">
+    <div id="mp-icon" style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:16px"></div>
+    <div class="modal-title" id="mp-title"></div>
+    <div class="modal-sub" id="mp-body"></div>
+    <div class="modal-btns"><button class="btn p" onclick="closeModal('modal-popup');if(window._pcb)window._pcb()">OK</button></div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+/* DATA */
+var USERS={finance:{name:'Emma L.',ini:'EL',id:'USR-001',dept:'Finance',pos:'Finance Lead',email:'emma.l@invoflow.com',role:'finance'},bizzops:{name:'David R.',ini:'DR',id:'USR-002',dept:'Operations',pos:'Bizzops Manager',email:'david.r@invoflow.com',role:'bizzops'},po:{name:'Alissar A.',ini:'AA',id:'USR-003',dept:'Delivery',pos:'Project Owner',email:'alissar.a@invoflow.com',role:'po'},am:{name:'Sara K.',ini:'SK',id:'USR-004',dept:'Commercial',pos:'Account Manager',email:'sara.k@invoflow.com',role:'am'}};
+var CU=USERS.finance;
+var INV=[
+  {id:'INV-2026-001',customer:'Acme AG',cid:'CL-001',jira:['ACME-1001'],az:'AZ-ACME-2026-01',bm:'BM-ACME-2026-01',bmEnd:'Mar 31, 2026',is:'Pending',js:'Delivered',created:'Feb 01, 2026',amt:'€ 6,000',click:true,po:'Alissar A.',am:'Sara K.',bmRef:'BM-2026-01'},
+  {id:'INV-2026-002',customer:'Acme AG',cid:'CL-001',jira:['ACME-1002','ACME-1003'],az:'AZ-ACME-2026-01',bm:'BM-ACME-2026-01',bmEnd:'Mar 31, 2026',is:'Error',js:'Overdue',created:'Feb 01, 2026',amt:'€ 12,000',click:true,po:'Alissar A.',am:'Sara K.',bmRef:'BM-2026-01'},
+  {id:'INV-2026-003',customer:'BetaCorp GmbH',cid:'CL-002',jira:['BETA-2001'],az:'AZ-BETA-2026-02',bm:'BM-BETA-2026-02',bmEnd:'Apr 15, 2026',is:'Error',js:'Overdue',created:'Feb 18, 2026',amt:'€ 7,000',click:true,po:'Maria K.',am:'Tom B.',bmRef:'BM-2026-02'},
+  {id:'INV-2026-004',customer:'BetaCorp GmbH',cid:'CL-002',jira:['BETA-2002'],az:'AZ-BETA-2026-02',bm:'BM-BETA-2026-02',bmEnd:'Apr 15, 2026',is:'Error',js:'Delivered',created:'Feb 18, 2026',amt:'€ 6,500',click:true,po:'Maria K.',am:'Tom B.',bmRef:'BM-2026-02'},
+  {id:'INV-2026-005',customer:'Delta GmbH',cid:'CL-003',jira:['DELT-3001','DELT-3002'],az:'AZ-DELT-2026-03',bm:'BM-DELT-2026-03',bmEnd:'Apr 30, 2026',is:'Error',js:'Delivered',created:'Feb 20, 2026',amt:'€ 8,000',click:true,po:'Marco M.',am:'Anna B.',bmRef:'BM-2026-03'},
+  {id:'INV-2026-006',customer:'Delta GmbH',cid:'CL-003',jira:['DELT-3003'],az:'AZ-DELT-2026-03',bm:'BM-DELT-2026-03',bmEnd:'Apr 30, 2026',is:'Pending',js:'Delivered',created:'Feb 20, 2026',amt:'€ 2,000',click:true,po:'Marco M.',am:'Anna B.',bmRef:'BM-2026-03'},
+  {id:'INV-2026-007',customer:'Sigma Ltd',cid:'CL-004',jira:['SIGM-4001'],az:'AZ-SIGM-2026-04',bm:'BM-SIGM-2026-04',bmEnd:'May 15, 2026',is:'Sent',js:'Delivered',created:'Mar 05, 2026',amt:'£ 6,000',click:false,po:'Alissar A.',am:'Anna B.',bmRef:'BM-2026-04'},
+  {id:'INV-2026-008',customer:'Sigma Ltd',cid:'CL-004',jira:['SIGM-4002','SIGM-4003'],az:'AZ-SIGM-2026-04',bm:'BM-SIGM-2026-04',bmEnd:'May 15, 2026',is:'Pending',js:'Delivered',created:'Mar 05, 2026',amt:'£ 6,500',click:true,po:'Alissar A.',am:'Anna B.',bmRef:'BM-2026-04'},
+  {id:'INV-2026-009',customer:'TechNova SA',cid:'CL-005',jira:['TECH-5001'],az:'AZ-TECH-2026-05',bm:'BM-TECH-2026-05',bmEnd:'Apr 30, 2026',is:'Pending',js:'Delivered',created:'Mar 01, 2026',amt:'CHF 7,000',click:true,po:'Maria K.',am:'Sara K.',bmRef:'BM-2026-05'},
+  {id:'INV-2026-010',customer:'TechNova SA',cid:'CL-005',jira:['TECH-5002'],az:'AZ-TECH-2026-05',bm:'BM-TECH-2026-05',bmEnd:'Apr 30, 2026',is:'Pending',js:'On Time',created:'Mar 01, 2026',amt:'CHF 7,000',click:false,po:'Maria K.',am:'Sara K.',bmRef:'BM-2026-05'},
+  {id:'INV-2026-011',customer:'TechNova SA',cid:'CL-005',jira:['TECH-5003'],az:'AZ-TECH-2026-05',bm:'BM-TECH-2026-05',bmEnd:'Apr 30, 2026',is:'Closed',js:'Delivered',created:'Mar 01, 2026',amt:'CHF 7,000',click:false,po:'Maria K.',am:'Sara K.',bmRef:'BM-2026-05'},
+  {id:'INV-2026-012',customer:'RedCloud BV',cid:'CL-006',jira:['REDC-6001','REDC-6002'],az:'AZ-REDC-2026-06',bm:'BM-REDC-2026-06',bmEnd:'May 31, 2026',is:'Failed',js:'Delivered',created:'Mar 18, 2026',amt:'€ 4,000',click:false,po:'Marco M.',am:'Tom B.',bmRef:'BM-2026-06'},
+  {id:'INV-2026-013',customer:'RedCloud BV',cid:'CL-006',jira:['REDC-6003'],az:'AZ-REDC-2026-06',bm:'BM-REDC-2026-06',bmEnd:'May 31, 2026',is:'Sent',js:'Delivered',created:'Mar 18, 2026',amt:'€ 4,500',click:false,po:'Marco M.',am:'Tom B.',bmRef:'BM-2026-06'}
+];
+var CUSTS=[
+  {id:'CL-001',name:'Acme AG',addr:'Hauptstraße 45, 10115 Berlin, Germany',reg:'HRB 123456 B',proof:'Additional Report',delType:'Email',delVal:'invoicing@invoflow.com',contact:{name:'Anna Schmidt',email:'a.schmidt@acme-ag.de',mobile:'+49 171 234 5678',dept:'Finance',pos:'Finance Manager'},ar:[{n:'Project ID',t:'String'},{n:'Sprint Number',t:'Integer'},{n:'Delivery Percentage',t:'Float'}]},
+  {id:'CL-002',name:'BetaCorp GmbH',addr:'Ringstraße 12, 1010 Vienna, Austria',reg:'FN 234567 a',proof:'Email Proof',delType:'Platform',delVal:'portal.betacorp.io/invoices',contact:{name:'Peter Klaus',email:'p.klaus@betacorp.io',mobile:'+43 699 876 5432',dept:'Procurement',pos:'Procurement Lead'},ar:[]},
+  {id:'CL-003',name:'Delta GmbH',addr:'Königsallee 57, 40212 Düsseldorf, Germany',reg:'HRB 345678 D',proof:'Additional Report',delType:'Email',delVal:'invoicing@invoflow.com',contact:{name:'Lars Weber',email:'l.weber@delta-gmbh.de',mobile:'+49 172 345 6789',dept:'Operations',pos:'Operations Director'},ar:[{n:'Work Order Number',t:'String'},{n:'Completion Date',t:'Date'},{n:'Accepted Units',t:'Integer'}]},
+  {id:'CL-004',name:'Sigma Ltd',addr:'14 Baker Street, London W1U 7AE, UK',reg:'04567890',proof:'Email Proof',delType:'Email',delVal:'invoicing@invoflow.com',contact:{name:'Sophie Braun',email:'s.braun@sigma.co.uk',mobile:'+44 7911 234567',dept:'Finance',pos:'Senior Finance Analyst'},ar:[]},
+  {id:'CL-005',name:'TechNova SA',addr:'Route de Genève 22, 1003 Lausanne, Switzerland',reg:'CHE-123.456.789',proof:'Additional Report',delType:'Platform',delVal:'invoices.technova.ch/upload',contact:{name:'Marc Dupont',email:'m.dupont@technova.ch',mobile:'+41 79 123 45 67',dept:'IT',pos:'IT Programme Manager'},ar:[{n:'Ticket Reference',t:'String'},{n:'Story Points Delivered',t:'Integer'},{n:'Sprint Velocity',t:'Float'},{n:'Approved By',t:'String'}]},
+  {id:'CL-006',name:'RedCloud BV',addr:'Herengracht 420, 1017 BZ Amsterdam, Netherlands',reg:'KVK 67890123',proof:'Email Proof',delType:'Platform',delVal:'supplier.redcloud.io/invoices',contact:{name:'Claire Janssen',email:'c.janssen@redcloud.io',mobile:'+31 6 12 34 56 78',dept:'Management',pos:'Operations Manager'},ar:[]}
+];
+var BMS=[
+  {id:'BM-2026-01',cid:'BM-ACME-2026-01',az:'AZ-ACME-2026-01',customer:'Acme AG',topic:'Platform Dev Sprint 14-16',billing:'Story Point',am:'Sara K.',po:'Alissar A.',prop:'Jan 05, 2026',created:'Jan 10, 2026',start:'Jan 15, 2026',due:'Mar 31, 2026',amt:'€ 18,000',amtNum:18000,openedNum:18000,status:'Closed',inst:[{id:'INST-01-A',desc:'Sprint 14',amt:'€ 6,000'},{id:'INST-01-B',desc:'Sprint 15',amt:'€ 6,000'},{id:'INST-01-C',desc:'Sprint 16',amt:'€ 6,000'}]},
+  {id:'BM-2026-02',cid:'BM-BETA-2026-02',az:'AZ-BETA-2026-02',customer:'BetaCorp GmbH',topic:'API Integration Phases',billing:'Workpackage',am:'Tom B.',po:'Maria K.',prop:'Jan 12, 2026',created:'Jan 18, 2026',start:'Jan 22, 2026',due:'Apr 15, 2026',amt:'€ 13,500',amtNum:13500,openedNum:13500,status:'Closed',inst:[{id:'INST-02-A',desc:'API Phase 1',amt:'€ 7,000'},{id:'INST-02-B',desc:'API Phase 2',amt:'€ 6,500'}]},
+  {id:'BM-2026-03',cid:'BM-DELT-2026-03',az:'AZ-DELT-2026-03',customer:'Delta GmbH',topic:'Infrastructure Modernization',billing:'Workpackage',am:'Anna B.',po:'Marco M.',prop:'Jan 10, 2026',created:'Jan 20, 2026',start:'Feb 01, 2026',due:'Apr 30, 2026',amt:'€ 10,000',amtNum:10000,openedNum:10000,status:'Closed',inst:[{id:'INST-03-A',desc:'Network Migration',amt:'€ 4,500'},{id:'INST-03-B',desc:'Server Config',amt:'€ 3,500'},{id:'INST-03-C',desc:'Testing',amt:'€ 2,000'}]},
+  {id:'BM-2026-04',cid:'BM-SIGM-2026-04',az:'AZ-SIGM-2026-04',customer:'Sigma Ltd',topic:'Cloud Migration Phase 2',billing:'Story Point',am:'Anna B.',po:'Alissar A.',prop:'Feb 05, 2026',created:'Feb 10, 2026',start:'Feb 15, 2026',due:'May 15, 2026',amt:'£ 12,500',amtNum:12500,openedNum:12500,status:'Closed',inst:[{id:'INST-04-A',desc:'Cloud Architecture',amt:'£ 6,000'},{id:'INST-04-B',desc:'Data Migration',amt:'£ 6,500'}]},
+  {id:'BM-2026-05',cid:'BM-TECH-2026-05',az:'AZ-TECH-2026-05',customer:'TechNova SA',topic:'Digital Transformation Sprints',billing:'Story Point',am:'Sara K.',po:'Maria K.',prop:'Jan 20, 2026',created:'Jan 28, 2026',start:'Feb 01, 2026',due:'Apr 30, 2026',amt:'CHF 21,000',amtNum:21000,openedNum:21000,status:'Closed',inst:[{id:'INST-05-A',desc:'Sprint 1-2',amt:'CHF 7,000'},{id:'INST-05-B',desc:'Sprint 3-4',amt:'CHF 7,000'},{id:'INST-05-C',desc:'Sprint 5-6',amt:'CHF 7,000'}]},
+  {id:'BM-2026-06',cid:'BM-REDC-2026-06',az:'AZ-REDC-2026-06',customer:'RedCloud BV',topic:'DevOps Setup & Monitoring',billing:'Workpackage',am:'Tom B.',po:'Marco M.',prop:'Feb 12, 2026',created:'Feb 16, 2026',start:'Feb 20, 2026',due:'May 31, 2026',amt:'€ 8,500',amtNum:8500,openedNum:8500,status:'Closed',inst:[{id:'INST-06-A',desc:'CI/CD Pipeline',amt:'€ 4,000'},{id:'INST-06-B',desc:'Monitoring',amt:'€ 4,500'}]},
+  {id:'BM-2026-07',cid:'BM-BETA-2026-07',az:'AZ-BETA-2026-02',customer:'BetaCorp GmbH',topic:'Frontend Redesign & QA',billing:'Story Point',am:'Tom B.',po:'Marco M.',prop:'Feb 01, 2026',created:'Feb 05, 2026',start:'Feb 10, 2026',due:'Jun 30, 2026',amt:'€ 14,000',amtNum:14000,openedNum:0,status:'Open',inst:[{id:'INST-07-A',desc:'Frontend Redesign',amt:'€ 8,000'},{id:'INST-07-B',desc:'UI Testing & QA',amt:'€ 6,000'}]}
+];
+var AZS=[
+  {id:'AZ-2026-01',cid:'AZ-ACME-2026-01',customer:'Acme AG',title:'Platform Development Framework 2026',created:'Jan 02, 2026',start:'Jan 15, 2026',end:'Dec 31, 2026',cur:'EUR',amt:'€ 80,000',daily:'€ 850',wp:'€ 620',am:'Sara K.',pct:22.5},
+  {id:'AZ-2026-02',cid:'AZ-BETA-2026-02',customer:'BetaCorp GmbH',title:'Backend Integration & Support 2026',created:'Jan 08, 2026',start:'Jan 20, 2026',end:'Oct 31, 2026',cur:'EUR',amt:'€ 60,000',daily:'€ 800',wp:'€ 580',am:'Tom B.',pct:45.8},
+  {id:'AZ-2026-03',cid:'AZ-DELT-2026-03',customer:'Delta GmbH',title:'Infrastructure Modernization 2026',created:'Jan 05, 2026',start:'Feb 01, 2026',end:'Aug 31, 2026',cur:'EUR',amt:'€ 45,000',daily:'€ 750',wp:'€ 550',am:'Anna B.',pct:22.2},
+  {id:'AZ-2026-04',cid:'AZ-SIGM-2026-04',customer:'Sigma Ltd',title:'Cloud Migration Phase 2',created:'Feb 01, 2026',start:'Feb 15, 2026',end:'Nov 30, 2026',cur:'GBP',amt:'£ 55,000',daily:'£ 820',wp:'£ 600',am:'Anna B.',pct:22.7},
+  {id:'AZ-2026-05',cid:'AZ-TECH-2026-05',customer:'TechNova SA',title:'Digital Transformation Programme',created:'Jan 15, 2026',start:'Feb 01, 2026',end:'Dec 31, 2026',cur:'CHF',amt:'CHF 95,000',daily:'CHF 950',wp:'CHF 700',am:'Sara K.',pct:22.1},
+  {id:'AZ-2026-06',cid:'AZ-REDC-2026-06',customer:'RedCloud BV',title:'DevOps & Continuous Delivery 2026',created:'Feb 10, 2026',start:'Feb 20, 2026',end:'Sep 30, 2026',cur:'EUR',amt:'€ 38,000',daily:'€ 780',wp:'€ 560',am:'Tom B.',pct:22.4}
+];
+var PAYS=[
+  {inv:'INV-2026-007',customer:'Sigma Ltd',az:'AZ-SIGM-2026-04',bm:'BM-SIGM-2026-04',amt:'£ 6,000',sent:'Mar 15, 2026',exp:'Apr 15, 2026',st:'Awaiting Notification'},
+  {inv:'INV-2026-008',customer:'Sigma Ltd',az:'AZ-SIGM-2026-04',bm:'BM-SIGM-2026-04',amt:'£ 6,500',sent:'Mar 20, 2026',exp:'Apr 20, 2026',st:'Awaiting Notification'},
+  {inv:'INV-2026-010',customer:'TechNova SA',az:'AZ-TECH-2026-05',bm:'BM-TECH-2026-05',amt:'CHF 7,000',sent:'Mar 10, 2026',exp:'Apr 10, 2026',st:'Awaiting Notification'},
+  {inv:'INV-2026-011',customer:'TechNova SA',az:'AZ-TECH-2026-05',bm:'BM-TECH-2026-05',amt:'CHF 7,000',sent:'Feb 28, 2026',exp:'Mar 28, 2026',st:'Closed'},
+  {inv:'INV-2026-012',customer:'RedCloud BV',az:'AZ-REDC-2026-06',bm:'BM-REDC-2026-06',amt:'€ 4,000',sent:'Mar 25, 2026',exp:'Apr 25, 2026',st:'Failed'},
+  {inv:'INV-2026-013',customer:'RedCloud BV',az:'AZ-REDC-2026-06',bm:'BM-REDC-2026-06',amt:'€ 4,500',sent:'Mar 28, 2026',exp:'Apr 28, 2026',st:'Awaiting Notification'}
+];
+var HIST={
+  'INV-2026-001':[{e:'Invoice ticket created',d:'Jira ticket ACME-1001 linked to BM-2026-01',t:'Feb 01, 2026 · 09:00',c:'#4338ca'},{e:'Jira ticket ACME-1001 marked Delivered',d:'Delivery confirmed in Jira',t:'Apr 05, 2026 · 14:22',c:'#059669'},{e:'SP report generated',d:'System auto-generated story point report',t:'Apr 05, 2026 · 14:23',c:'#2563eb'},{e:'Creating Additional Report — in progress',d:'System is automating this step. No action needed.',t:'Apr 06, 2026 · 08:00',c:'#d97706'}],
+  'INV-2026-002':[{e:'Invoice ticket created',d:'ACME-1002, ACME-1003 linked',t:'Feb 01, 2026 · 09:05',c:'#4338ca'},{e:'BM end date passed — tickets not delivered',d:'BM-2026-01 end date Mar 31, 2026 lapsed',t:'Mar 31, 2026 · 23:59',c:'#dc2626'},{e:'Status → Error | Overdue',d:'Automatic system update',t:'Apr 01, 2026 · 00:01',c:'#dc2626'},{e:'Notification sent to PO — Alissar A.',d:'Overdue ticket notification',t:'Apr 01, 2026 · 08:00',c:'#d97706'},{e:'Notification sent to AM — Sara K.',d:'Overdue ticket notification',t:'Apr 01, 2026 · 08:00',c:'#d97706'}],
+  'INV-2026-003':[{e:'Invoice ticket created',d:'BETA-2001 linked to BM-2026-02',t:'Feb 18, 2026 · 10:00',c:'#4338ca'},{e:'BM end date passed',d:'BM-2026-02 end date Apr 15, 2026 lapsed',t:'Apr 15, 2026 · 23:59',c:'#dc2626'},{e:'Status → Error | Overdue',d:'Automatic system update',t:'Apr 16, 2026 · 00:01',c:'#dc2626'},{e:'New BM date proposed by PO — Maria K.',d:'Proof of customer approval uploaded',t:'Apr 17, 2026 · 11:30',c:'#7c3aed'},{e:'Notification sent to Bizzops',d:'Proof uploaded · Awaiting validation',t:'Apr 17, 2026 · 11:31',c:'#d97706'}],
+  'INV-2026-004':[{e:'Invoice ticket created',d:'BETA-2002 linked',t:'Feb 18, 2026 · 10:05',c:'#4338ca'},{e:'BETA-2002 marked Delivered',d:'Delivery confirmed in Jira',t:'Mar 10, 2026 · 15:40',c:'#059669'},{e:'BM limit exceeded — Error',d:'BM-BETA-2026-02 exceeded by € 1,500',t:'Mar 12, 2026 · 09:00',c:'#dc2626'},{e:'Notifications sent to PO & AM',d:'Maria K. and Tom B. notified',t:'Mar 12, 2026 · 09:02',c:'#d97706'}],
+  'INV-2026-005':[{e:'Invoice ticket created',d:'DELT-3001, DELT-3002 linked',t:'Feb 20, 2026 · 11:00',c:'#4338ca'},{e:'Jira sync error detected',d:'API connection timeout — Code: SYNC_ERR_408',t:'Mar 15, 2026 · 14:00',c:'#dc2626'},{e:'Human intervention required',d:'Automated retry failed — manual resolution needed',t:'Mar 15, 2026 · 14:05',c:'#dc2626'},{e:'All stakeholders notified',d:'Finance Lead, Bizzops, PO (Marco M.), AM (Anna B.)',t:'Mar 15, 2026 · 14:06',c:'#d97706'}],
+  'INV-2026-006':[{e:'Invoice ticket created',d:'DELT-3003 linked',t:'Feb 20, 2026 · 11:10',c:'#4338ca'},{e:'DELT-3003 marked Delivered',d:'Delivery confirmed in Jira',t:'Mar 01, 2026 · 10:00',c:'#059669'},{e:'Additional Report signed by Bizzops',d:'David R. signed the report',t:'Mar 05, 2026 · 14:00',c:'#7c3aed'},{e:'Report sent to Lars Weber',d:'l.weber@delta-gmbh.de · Delta GmbH',t:'Mar 05, 2026 · 14:05',c:'#059669'},{e:'Reminder #1 sent to PO — Marco M.',d:'Customer approval upload pending',t:'Mar 15, 2026 · 09:00',c:'#d97706'}],
+  'INV-2026-008':[{e:'Invoice ticket created',d:'SIGM-4002, SIGM-4003 linked',t:'Mar 05, 2026 · 09:00',c:'#4338ca'},{e:'Jira tickets marked Delivered',d:'SIGM-4002 and SIGM-4003',t:'Mar 20, 2026 · 16:00',c:'#059669'},{e:'Invoice template generated',d:'System generated invoice template for Sigma Ltd',t:'Mar 20, 2026 · 16:02',c:'#2563eb'},{e:'Reminder #1 → Bizzops — David R.',d:'Invoice confirmation pending',t:'Mar 25, 2026 · 09:00',c:'#d97706'},{e:'Reminder #2 → Bizzops — David R.',d:'Invoice confirmation still pending',t:'Apr 01, 2026 · 09:00',c:'#d97706'}],
+  'INV-2026-009':[{e:'Invoice ticket created',d:'TECH-5001 linked',t:'Mar 01, 2026 · 10:00',c:'#4338ca'},{e:'TECH-5001 marked Delivered',d:'Delivery confirmed in Jira',t:'Mar 10, 2026 · 15:30',c:'#059669'},{e:'Additional Report created',d:'System compiled TechNova report with all credentials',t:'Mar 11, 2026 · 08:00',c:'#2563eb'},{e:'Reminder #1 → Bizzops — David R.',d:'Additional report signature pending',t:'Mar 15, 2026 · 09:00',c:'#d97706'},{e:'Reminder #2 → Bizzops — David R.',d:'Still pending',t:'Mar 22, 2026 · 09:00',c:'#d97706'}]
+};
+var activeInvId=null,otpInt=null,custFilter=null,splitMode=false,azModeV='scan',bmModeV='scan',instIdCnt=0;
+
+window.onload=function(){drawPie();renderInvoices();renderCustomers();renderBMs();renderAZs();renderPays();};
+/* AUTH */
+function fillDemo(r){var m={finance:'emma.l@invoflow.com',bizzops:'david.r@invoflow.com',po:'alissar.a@invoflow.com',am:'sara.k@invoflow.com'};document.getElementById('l-email').value=m[r]||'';document.getElementById('l-pass').value='demo1234';CU=USERS[r];}
+function doLogin(){var e=document.getElementById('l-email').value.trim(),p=document.getElementById('l-pass').value.trim();if(!e||!p){toast('Please fill in all fields','err');return;}Object.keys(USERS).forEach(function(k){if(USERS[k].email===e)CU=USERS[k];});document.getElementById('tfa-email').textContent=e;show('sc-2fa');hide('sc-login');startTimer();}
+function verifyOTP(){var v=['o1','o2','o3','o4','o5','o6'].map(function(i){return(document.getElementById(i)||{}).value||'';}).join('');if(v.length<6){toast('Enter all 6 digits','err');return;}clearInterval(otpInt);launchApp();}
+function show2faBack(){show('sc-login');hide('sc-2fa');clearInterval(otpInt);}
+function showForgot(){show('sc-forgot');hide('sc-login');}
+function showLogin(){['sc-forgot','sc-reset'].forEach(hide);show('sc-login');}
+function sendReset(){show('sc-reset');hide('sc-forgot');}
+function resendOTP(){toast('Code resent!','ok');startTimer();}
+function startTimer(){var s=119;clearInterval(otpInt);otpInt=setInterval(function(){s--;var m=Math.floor(s/60),sec=s%60,el=document.getElementById('otp-timer');if(el)el.textContent='0'+m+':'+(sec<10?'0':'')+sec;if(s<=0){clearInterval(otpInt);var r=document.getElementById('resend-btn');if(r)r.disabled=false;}},1000);}
+function oNext(el,nid){if(el.value&&nid){var n=document.getElementById(nid);if(n)n.focus();}}
+function oPrev(e,pid,el){if(e.key==='Backspace'&&!el.value&&pid){var p=document.getElementById(pid);if(p){p.focus();p.value='';}}}
+function launchApp(){hide('auth-wrap');show('app-wrap');updateUI();showMain('home',document.getElementById('ni-home'));}
+function updateUI(){var u=CU;document.getElementById('s-av').textContent=u.ini;document.getElementById('s-uname').textContent=u.name;document.getElementById('s-urole').textContent=u.pos;document.getElementById('tb-sub').textContent='Welcome back, '+u.name;document.getElementById('prof-av').textContent=u.ini;document.getElementById('prof-hello').textContent=u.name;document.getElementById('prof-name').textContent=u.name;document.getElementById('prof-role').textContent=u.pos+' · '+u.dept;document.getElementById('prof-id').textContent=u.id;document.getElementById('prof-dept').textContent=u.dept;document.getElementById('prof-pos').textContent=u.pos;document.getElementById('prof-email').textContent=u.email;showRoleDash();}
+function showRoleDash(){['finance','bizzops','po','am'].forEach(function(r){var el=document.getElementById('home-'+r);if(el)el.classList[CU.role===r?'remove':'add']('h');});}
+function doLogout(){closeModal('modal-logout');hide('app-wrap');show('auth-wrap');show('sc-login');['sc-2fa','sc-forgot','sc-reset'].forEach(hide);document.getElementById('l-email').value='';document.getElementById('l-pass').value='';}
+
+/* NAV */
+function showMain(id,el){['home','inv','bm','az','pay','reports'].forEach(function(s){var sc=document.getElementById('sc-'+s);if(sc)sc.classList[s===id?'remove':'add']('h');});document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('on');});if(el)el.classList.add('on');var titles={home:'Home',inv:'Invoice Dashboard',bm:'BM Overview',az:'AZ Overview',pay:'Payment Dashboard',reports:'Reports'};document.getElementById('tb-title').textContent=titles[id]||id;if(id==='home')showRoleDash();}
+
+/* PIE */
+function drawPie(){var data=[{v:5,c:'#f59e0b'},{v:4,c:'#dc2626'},{v:2,c:'#2563eb'},{v:1,c:'#059669'},{v:1,c:'#ec4899'}],total=13,cx=50,cy=50,r=42,ri=28,svg=document.getElementById('pie-svg');if(!svg)return;var paths='',a=-Math.PI/2;data.forEach(function(s){var ang=(s.v/total)*2*Math.PI,ea=a+ang,x1=cx+r*Math.cos(a),y1=cy+r*Math.sin(a),x2=cx+r*Math.cos(ea),y2=cy+r*Math.sin(ea);paths+='<path d="M '+cx+' '+cy+' L '+x1.toFixed(1)+' '+y1.toFixed(1)+' A '+r+' '+r+' 0 '+(ang>Math.PI?1:0)+' 1 '+x2.toFixed(1)+' '+y2.toFixed(1)+' Z" fill="'+s.c+'"/>';a=ea;});paths+='<circle cx="'+cx+'" cy="'+cy+'" r="'+ri+'" fill="white"/><text x="'+cx+'" y="'+(cy+5)+'" text-anchor="middle" font-size="13" font-weight="700" fill="#0f172a" font-family="DM Sans,sans-serif">13</text>';svg.innerHTML=paths;}
+
+/* RENDER INVOICES — per-column filters */
+function gv(id){return(document.getElementById(id)||{}).value||'';}
+function renderInvoices(){var tbody=document.getElementById('inv-tbody');if(!tbody)return;var list=INV;if(custFilter)list=list.filter(function(i){return i.cid===custFilter;});var fId=gv('cf-inv-id'),fJ=gv('cf-jira'),fAz=gv('cf-az'),fBm=gv('cf-bm'),fBmEnd=gv('cf-bmend'),fIs=gv('cf-is'),fJs=gv('cf-js'),fCr=gv('cf-created');if(fId)list=list.filter(function(i){return i.id.toLowerCase().includes(fId.toLowerCase());});if(fJ)list=list.filter(function(i){return i.jira.join(' ').toLowerCase().includes(fJ.toLowerCase());});if(fAz)list=list.filter(function(i){return i.az.toLowerCase().includes(fAz.toLowerCase());});if(fBm)list=list.filter(function(i){return i.bm.toLowerCase().includes(fBm.toLowerCase());});if(fBmEnd)list=list.filter(function(i){return i.bmEnd.toLowerCase().includes(fBmEnd.toLowerCase());});if(fIs)list=list.filter(function(i){return i.is===fIs;});if(fJs)list=list.filter(function(i){return i.js===fJs;});if(fCr)list=list.filter(function(i){return i.created.toLowerCase().includes(fCr.toLowerCase());});tbody.innerHTML=list.map(function(inv){var jr=inv.jira.map(function(j){return'<span class="jira-link">'+j+'</span>';}).join(' ');var cls=inv.click?'crow':'';var oc=inv.click?'onclick="openInvDetail(\''+inv.id+'\')"':'';var jsc=inv.js.toLowerCase().replace(' ','-');return'<tr class="'+cls+'" '+oc+'><td style="font-weight:600" class="mono">'+inv.id+'</td><td>'+jr+'</td><td class="mono" style="font-size:11px">'+inv.az+'</td><td class="mono" style="font-size:11px">'+inv.bm+'</td><td>'+inv.bmEnd+'</td><td><span class="pill '+inv.is.toLowerCase()+'">'+inv.is+'</span></td><td><span class="pill '+jsc+'">'+inv.js+'</span></td><td style="font-size:11px">'+inv.created+'</td></tr>';}).join('');}
+
+/* RENDER CUSTOMERS */
+function renderCustomers(){var tbody=document.getElementById('cust-tbody');if(!tbody)return;var s=gv('cust-search');var list=CUSTS.filter(function(c){return !s||c.name.toLowerCase().includes(s.toLowerCase())||c.id.toLowerCase().includes(s.toLowerCase());});tbody.innerHTML=list.map(function(c){return'<tr><td><span style="cursor:pointer;color:var(--indigo-600);font-weight:600" onclick="filterCust(\''+c.id+'\',\''+c.name+'\')">'+c.name+'</span></td><td class="mono" style="font-size:11px;color:var(--tx2)">'+c.id+'</td><td><button class="btn-icon" onclick="openCustEdit(\''+c.id+'\')" title="Edit"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></td></tr>';}).join('');}
+function filterCust(cid,name){custFilter=cid;renderInvoices();var b=document.getElementById('cust-active-filter');if(b){b.style.display='block';document.getElementById('cust-filter-name').textContent=name;}}
+function clearCF(){custFilter=null;renderInvoices();var b=document.getElementById('cust-active-filter');if(b)b.style.display='none';}
+
+/* RENDER BMs — per-column filters + opened amount/% */
+function renderBMs(filterIds){var tbody=document.getElementById('bm-tbody');if(!tbody)return;var list=BMS;if(filterIds)list=list.filter(function(b){return filterIds.includes(b.id);});var fId=gv('cf-bm-id'),fCid=gv('cf-bm-cid'),fCust=gv('cf-bm-cust'),fAz=gv('cf-bm-az'),fTopic=gv('cf-bm-topic'),fBill=gv('cf-bm-bill'),fAm=gv('cf-bm-am'),fPo=gv('cf-bm-po'),fStart=gv('cf-bm-start'),fDue=gv('cf-bm-due'),fSt=gv('cf-bm-st');if(fId)list=list.filter(function(b){return b.id.toLowerCase().includes(fId.toLowerCase());});if(fCid)list=list.filter(function(b){return b.cid.toLowerCase().includes(fCid.toLowerCase());});if(fCust)list=list.filter(function(b){return b.customer===fCust;});if(fAz)list=list.filter(function(b){return b.az.toLowerCase().includes(fAz.toLowerCase());});if(fTopic)list=list.filter(function(b){return(b.topic||'').toLowerCase().includes(fTopic.toLowerCase());});if(fBill)list=list.filter(function(b){return b.billing===fBill;});if(fAm)list=list.filter(function(b){return b.am===fAm;});if(fPo)list=list.filter(function(b){return b.po===fPo;});if(fStart)list=list.filter(function(b){return b.start.toLowerCase().includes(fStart.toLowerCase());});if(fDue)list=list.filter(function(b){return b.due.toLowerCase().includes(fDue.toLowerCase());});if(fSt)list=list.filter(function(b){return b.status===fSt;});
+tbody.innerHTML=list.map(function(b){var isO=b.status==='Open';var pct=b.amtNum>0?Math.round((b.openedNum/b.amtNum)*100):0;var pc=pct>80?'#dc2626':pct>50?'#d97706':'#059669';var sym=b.amt.charAt(0)==='£'?'£':b.amt.charAt(0)==='C'?'CHF ':'€ ';var openedStr=sym+(b.openedNum||0).toLocaleString();return'<tr><td class="mono" style="font-weight:600;font-size:11.5px">'+b.id+'</td><td class="mono" style="font-size:11px">'+b.cid+'</td><td>'+b.customer+'</td><td class="mono" style="font-size:11px">'+b.az+'</td><td style="font-size:12px;max-width:140px;white-space:normal">'+( b.topic||'—')+'</td><td><span class="pill '+(b.billing==='Story Point'?'sp':'wp')+'">'+b.billing+'</span></td><td>'+b.am+'</td><td>'+b.po+'</td><td class="mono" style="font-size:11px">'+b.start+'</td><td class="mono" style="font-size:11px">'+b.due+'</td><td class="mono" style="font-weight:600">'+b.amt+'</td><td class="mono" style="font-weight:600;color:'+pc+'">'+openedStr+'</td><td style="min-width:100px"><div class="prog-wrap"><div class="prog-fill" style="width:'+Math.min(pct,100)+'%;background:'+pc+'">'+pct+'%</div></div></td><td><span class="pill '+(isO?'open':'closed')+'">'+b.status+'</span></td><td><div style="display:flex;gap:4px;align-items:center"><button class="btn-icon" onclick="openBMIF(\''+b.id+'\',\'view\')" title="Edit"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>'+(isO?'<button class="btn sky sm" onclick="openInvAdd(\''+b.id+'\')"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Invoice</button>':'<button class="btn sm" style="opacity:.4;cursor:not-allowed" onclick="toast(\'Cannot add invoice — BM is Closed\',\'err\')">+ Invoice</button>')+'</div></td></tr>';}).join('');}
+
+/* RENDER AZs — per-column filters */
+function renderAZs(){var tbody=document.getElementById('az-tbody');if(!tbody)return;var list=AZS;var fId=gv('cf-az-id'),fCid=gv('cf-az-cid'),fCust=gv('cf-az-cust'),fTitle=gv('cf-az-title'),fCur=gv('cf-az-cur'),fAm=gv('cf-az-am');if(fId)list=list.filter(function(a){return a.id.toLowerCase().includes(fId.toLowerCase());});if(fCid)list=list.filter(function(a){return a.cid.toLowerCase().includes(fCid.toLowerCase());});if(fCust)list=list.filter(function(a){return a.customer===fCust;});if(fTitle)list=list.filter(function(a){return a.title.toLowerCase().includes(fTitle.toLowerCase());});if(fCur)list=list.filter(function(a){return a.cur===fCur;});if(fAm)list=list.filter(function(a){return a.am===fAm;});
+tbody.innerHTML=list.map(function(a){var pc=a.pct>40?'#d97706':a.pct>25?'#4338ca':'#059669';return'<tr><td class="mono" style="font-weight:600;font-size:11.5px">'+a.id+'</td><td class="mono" style="font-size:11px">'+a.cid+'</td><td>'+a.customer+'</td><td style="font-size:11.5px;max-width:180px;white-space:normal">'+a.title+'</td><td class="mono" style="font-size:11px">'+a.start+'</td><td class="mono" style="font-size:11px">'+a.end+'</td><td><span class="pill sent">'+a.cur+'</span></td><td class="mono" style="font-weight:600">'+a.amt+'</td><td style="min-width:120px"><div class="prog-wrap"><div class="prog-fill" style="width:'+Math.min(a.pct,100)+'%;background:'+pc+'">'+a.pct+'%</div></div></td><td>'+a.am+'</td><td><button class="btn-icon" onclick="openAZIF(\''+a.id+'\')" title="Edit"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></td></tr>';}).join('');}
+
+/* RENDER PAYMENTS */
+function renderPays(){var tbody=document.getElementById('pay-tbody');if(!tbody)return;tbody.innerHTML=PAYS.map(function(p,i){var stc={'Closed':'closed','Failed':'failed','Awaiting Notification':'aw','Awaiting Bank Entry':'pending','Payment Invalid':'error'}[p.st]||'pending';var notifCell=p.st==='Closed'?'<span class="mono" style="font-size:11px">'+p.exp+'</span>':'<input type="text" placeholder="MM/DD/YYYY" style="padding:3px 7px;border:1.5px solid var(--bd);border-radius:5px;font-size:11px;width:95px;font-family:var(--mono)">';var pdfCell=p.st==='Closed'?'<span class="pill closed">Uploaded</span>':(p.st==='Failed'?'<button class="btn danger sm" onclick="openPaySidebar('+i+')">Mark Details</button>':'<button class="btn sky sm" onclick="openPaySidebar('+i+')">Upload PDF</button>');var bankCell=p.st==='Closed'?'<span class="mono" style="font-weight:700;color:var(--emerald-600)">'+p.amt+'</span>':(p.st==='Failed'?'<span style="font-size:11px;color:var(--red-600);font-weight:600">N/A</span>':'<input type="text" placeholder="Enter amount" style="padding:3px 7px;border:1.5px solid var(--bd);border-radius:5px;font-size:11px;width:100px;font-family:var(--mono)">');return'<tr><td class="mono" style="font-weight:700">'+p.inv+'</td><td>'+p.customer+'</td><td class="mono" style="font-size:11px">'+p.az+'</td><td class="mono" style="font-size:11px">'+p.bm+'</td><td class="mono" style="font-weight:700">'+p.amt+'</td><td class="mono" style="font-size:11px">'+p.sent+'</td><td class="mono" style="font-size:11px">'+p.exp+'</td><td>'+notifCell+'</td><td>'+pdfCell+'</td><td>'+bankCell+'</td><td><span class="pill '+stc+'">'+p.st+'</span></td></tr>';}).join('');}
+
+/* PAYMENT SIDEBAR */
+function openPaySidebar(idx){
+  var p=PAYS[idx];
+  document.getElementById('pay-sidebar-title').textContent='Payment Notification — '+p.inv;
+  var body=document.getElementById('pay-sidebar-body');
+  body.innerHTML='<div style="margin-bottom:14px;padding:10px 12px;background:var(--bg2);border-radius:var(--r);font-size:12px;color:var(--tx2)"><b class="mono">'+p.inv+'</b> · '+p.customer+' · <b>'+p.amt+'</b></div>'
+  +'<div class="pay-opts">'
+  +'<div class="pay-opt sel" id="popt-upload" onclick="selectPayOpt(\'upload\')">'
+  +'<div style="font-size:20px;margin-bottom:6px">📄</div>'
+  +'<div class="pay-opt-title">Upload Notification</div>'
+  +'<div class="pay-opt-sub">Upload PDF + enter notification date</div></div>'
+  +'<div class="pay-opt" id="popt-fail" onclick="selectPayOpt(\'fail\')">'
+  +'<div style="font-size:20px;margin-bottom:6px">✕</div>'
+  +'<div class="pay-opt-title">Mark as Failed</div>'
+  +'<div class="pay-opt-sub">State reason for failure</div></div>'
+  +'</div>'
+  +'<div id="pay-upload-section">'
+  +'<div class="f" style="margin-bottom:12px"><label>Payment Notification Date <span class="req">*</span></label><input type="date" value="2026-04-07"></div>'
+  +'<div class="uz" onclick="simulatePayPDF(this)" style="padding:16px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--tx3)" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><div class="uz-title">Upload Payment PDF</div><div class="uz-sub">Bank confirmation or payment receipt</div></div>'
+  +'<div style="margin-top:12px;display:flex;gap:8px"><button class="btn emerald lg" onclick="confirmPayUpload()">Confirm &amp; Notify Finance</button><button class="btn" onclick="closePaySidebar()">Cancel</button></div>'
+  +'</div>'
+  +'<div id="pay-fail-section" style="display:none">'
+  +'<div class="f" style="margin-bottom:12px"><label>Reason for Failure <span class="req">*</span></label><textarea placeholder="Describe the reason for payment failure (e.g. customer dispute, incorrect bank details, etc.)" style="width:100%;height:100px;padding:8px 10px;border:1.5px solid var(--bd);border-radius:var(--r);font-size:13px;font-family:var(--font);resize:vertical"></textarea></div>'
+  +'<div style="margin-top:4px;font-size:11px;color:var(--red-600);font-weight:500">⚠ A reason is required to mark an invoice as failed.</div>'
+  +'<div style="margin-top:12px;display:flex;gap:8px"><button class="btn danger lg" onclick="confirmPayFail()">Mark as Failed</button><button class="btn" onclick="closePaySidebar()">Cancel</button></div>'
+  +'</div>';
+  document.getElementById('pay-sidebar').classList.add('open');
+  document.getElementById('rp-bd').classList.add('vis');
+}
+function selectPayOpt(t){document.getElementById('popt-upload').classList[t==='upload'?'add':'remove']('sel');document.getElementById('popt-fail').classList[t==='fail'?'add':'remove']('sel');document.getElementById('pay-upload-section').style.display=t==='upload'?'block':'none';document.getElementById('pay-fail-section').style.display=t==='fail'?'block':'none';}
+function simulatePayPDF(el){el.outerHTML='<div class="file-pill"><span style="flex:1;font-size:12px;color:var(--txs)">PaymentNotification_'+new Date().getTime()+'.pdf uploaded</span></div>';}
+function confirmPayUpload(){closePaySidebar();showPopup('Payment Notification Uploaded','Finance team has been notified. The invoice will move to Awaiting Bank Entry once payment is confirmed.','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>','#059669',null);}
+function confirmPayFail(){closePaySidebar();showPopup('Invoice Marked as Failed','The invoice has been marked as failed with the provided reason. Bizzops and Finance Lead have been notified.','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>','#dc2626',null);}
+function closePaySidebar(){document.getElementById('pay-sidebar').classList.remove('open');document.getElementById('rp-bd').classList.remove('vis');}
+/* PANELS */
+function openPanel(id){document.getElementById(id).classList.add('open');document.getElementById('rp-bd').classList.add('vis');}
+function closePanel(id){document.getElementById(id).classList.remove('open');var anyOpen=document.querySelectorAll('.rpanel.open').length>0;if(!anyOpen)document.getElementById('rp-bd').classList.remove('vis');}
+function closeAllPanels(){document.querySelectorAll('.rpanel').forEach(function(p){p.classList.remove('open');});document.getElementById('pay-sidebar').classList.remove('open');document.getElementById('rp-bd').classList.remove('vis');}
+function openProfile(){openPanel('panel-profile');}
+function openHistory(){if(!activeInvId)return;var h=HIST[activeInvId]||[];document.getElementById('history-body').innerHTML='<div class="timeline">'+h.map(function(item){return'<div class="tl-item"><div class="tl-dot" style="background:'+item.c+'"></div><div class="tl-cnt"><div class="tl-ev">'+item.e+'</div><div class="tl-det">'+item.d+'</div><div class="tl-dt">'+item.t+'</div></div></div>';}).join('')+'</div>';openPanel('panel-history');}
+function openSub(id){document.getElementById(id).classList.remove('h');}
+function closeSub(id){document.getElementById(id).classList.add('h');}
+function openModal(id){document.getElementById(id).classList.remove('h');}
+function closeModal(id){document.getElementById(id).classList.add('h');}
+function showPopup(title,body,icon,color,cb){document.getElementById('mp-title').textContent=title;document.getElementById('mp-body').textContent=body;document.getElementById('mp-icon').innerHTML='<div style="width:44px;height:44px;border-radius:12px;background:'+color+'20;display:flex;align-items:center;justify-content:center">'+icon+'</div>';window._pcb=cb||null;openModal('modal-popup');}
+function toast(msg,type){var el=document.getElementById('toast');el.textContent=msg;el.className=type||'';el.classList.add('show');setTimeout(function(){el.classList.remove('show');},2800);}
+function hide(id){var el=document.getElementById(id);if(el)el.classList.add('h');}
+function show(id){var el=document.getElementById(id);if(el)el.classList.remove('h');}
+
+/* INV DETAIL */
+function openInvDetail(invId){activeInvId=invId;var inv=INV.find(function(i){return i.id===invId;});if(!inv)return;document.getElementById('inv-detail-num').textContent=invId;document.getElementById('inv-detail-cust').textContent=inv.customer+' · '+inv.amt;document.getElementById('inv-detail-body').innerHTML=buildInvDetail(inv);openPanel('panel-inv-detail');}
+function metaGrid(inv){return'<div class="meta-grid"><div class="meta-item"><div class="meta-lbl">Project Owner</div><div class="meta-val">'+inv.po+'</div></div><div class="meta-item"><div class="meta-lbl">Account Manager</div><div class="meta-val">'+inv.am+'</div></div><div class="meta-item"><div class="meta-lbl">BM Reference</div><div class="meta-val sm">'+inv.bm+'</div></div><div class="meta-item"><div class="meta-lbl">AZ Reference</div><div class="meta-val sm">'+inv.az+'</div></div><div class="meta-item"><div class="meta-lbl">Invoice Amount</div><div class="meta-val" style="font-size:17px;color:var(--indigo-600)">'+inv.amt+'</div></div><div class="meta-item"><div class="meta-lbl">Status</div><div class="meta-val"><span class="pill '+inv.is.toLowerCase()+'">'+inv.is+'</span> &nbsp;<span class="pill '+inv.js.toLowerCase().replace(' ','-')+'">'+inv.js+'</span></div></div></div>';}
+function statusBlk(color,label,title,sub){var bgc=color+'14';return'<div style="background:'+bgc+';border-radius:var(--rl);padding:14px 16px;margin-bottom:16px;border-left:3px solid '+color+'"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:'+color+';margin-bottom:4px">'+label+'</div><div style="font-size:15px;font-weight:700;color:'+color+'">'+title+'</div>'+(sub?'<div style="font-size:12px;color:'+color+';margin-top:4px;opacity:.85">'+sub+'</div>':'')+'</div>';}
+function attRow(name,sub,extraBtn){return'<div class="att-row"><div class="att-ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--tx)">'+name+'</div><div style="font-size:10.5px;color:var(--tx3)">'+sub+'</div></div>'+(extraBtn||'')+'<button class="btn sm"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download</button></div>';}
+function trigRows(trigs){return'<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);margin:14px 0 8px">Triggers &amp; Notifications</div><div style="background:var(--bg2);border-radius:var(--r);padding:10px 12px;border:1px solid var(--bd)">'+trigs.map(function(t){return'<div class="trig-row"><div class="trig-dot" style="background:'+t.c+'"></div><div><div style="font-size:11.5px;color:var(--tx2)">'+t.text+'</div><div style="font-size:10.5px;color:var(--tx3);font-family:var(--mono)">'+t.time+'</div></div></div>';}).join('')+'</div>';}
+
+function buildInvDetail(inv){
+  switch(inv.id){
+    case 'INV-2026-001':
+      return metaGrid(inv)+statusBlk('#d97706','Current Status','Creating Additional Report','This step is fully automated. No action required.')+'<div style="background:var(--emerald-50);border:1px solid rgba(5,150,105,.2);border-radius:var(--r);padding:10px 12px;margin-bottom:14px;font-size:12px;color:var(--emerald-600)">System is automatically generating the Additional Report for Acme AG.</div>'+attRow('SP Report — ACME-1001.pdf','System generated · Apr 05, 2026','')+trigRows([{text:'Invoice ticket created by system',time:'Feb 01, 2026 · 09:00',c:'#4338ca'},{text:'Jira ticket ACME-1001 marked Delivered',time:'Apr 05, 2026 · 14:22',c:'#059669'},{text:'SP report auto-generated',time:'Apr 05, 2026 · 14:23',c:'#2563eb'},{text:'Creating Additional Report — in progress',time:'Apr 06, 2026 · 08:00',c:'#d97706'}]);
+    case 'INV-2026-002':
+      return metaGrid(inv)+statusBlk('#dc2626','Current Status','Overdue Ticket','Jira tickets ACME-1002, ACME-1003 were not delivered by the BM end date (Mar 31, 2026).')+'<div style="margin-bottom:14px"><button class="btn danger lg" onclick="proposeNewDate(\'BM-2026-01\')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Propose New BM Date</button></div>'+trigRows([{text:'Notification sent to PO — Alissar A.',time:'Apr 01, 2026 · 08:00',c:'#d97706'},{text:'Notification sent to AM — Sara K.',time:'Apr 01, 2026 · 08:00',c:'#d97706'}]);
+    case 'INV-2026-003':
+      return metaGrid(inv)+statusBlk('#dc2626','Current Status','Awaiting New Date Validation','PO has proposed a new BM end date with customer approval proof. Awaiting Bizzops validation.')+'<div style="margin-bottom:14px"><button class="btn warn lg" onclick="validateProof(\'BM-2026-02\')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Validate Proof</button><span style="font-size:11px;color:var(--tx3);margin-left:10px">Bizzops action only</span></div>'+trigRows([{text:'Notification sent to PO — Maria K.',time:'Apr 16, 2026 · 08:00',c:'#d97706'},{text:'New BM date proposed by PO — Maria K.',time:'Apr 17, 2026 · 11:30',c:'#7c3aed'},{text:'Proof uploaded · Notification sent to Bizzops',time:'Apr 17, 2026 · 11:31',c:'#d97706'}]);
+    case 'INV-2026-004':
+      return metaGrid(inv)+statusBlk('#dc2626','Current Status','BM Limit Exceeded by € 1,500','Invoice amount surpasses BM-BETA-2026-02 allocated budget. Action required.')+attRow('WP Report — BETA-2002.pdf','System generated · Mar 10, 2026','')+'<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);margin:14px 0 8px">Modify BM Limit</div><div style="display:flex;gap:8px;margin-bottom:14px"><button class="btn p lg" onclick="doSplitBM()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><polyline points="8 7 3 12 8 17"/><polyline points="16 7 21 12 16 17"/></svg>Split BM</button><button class="btn" onclick="toast(\'Extend BM Amount — contact your Bizzops Manager\',\'\')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Extend BM Amount</button></div>'+trigRows([{text:'Notification sent to PO — Maria K.',time:'Mar 12, 2026 · 09:02',c:'#d97706'},{text:'Notification sent to AM — Tom B.',time:'Mar 12, 2026 · 09:02',c:'#d97706'}]);
+    case 'INV-2026-005':
+      return metaGrid(inv)+statusBlk('#dc2626','Current Status','Jira Sync Error — Human Intervention Required','The system failed to sync ticket statuses. This cannot be resolved automatically.')+'<div style="background:var(--red-100);border:1px solid rgba(220,38,38,.2);border-radius:var(--r);padding:12px;margin-bottom:14px"><div style="font-size:12px;font-weight:700;color:var(--red-600);margin-bottom:6px">System Error Details</div><div style="font-size:12px;color:var(--red-600)">Error: Jira API connection timeout · Code: SYNC_ERR_408</div><div style="font-size:11.5px;color:var(--red-600);margin-top:8px;font-weight:600">Contact System Support: support@invoflow.com · Ref: SYNC-ERR-2026-0315</div></div>'+trigRows([{text:'Jira sync error detected',time:'Mar 15, 2026 · 14:00',c:'#dc2626'},{text:'Automated retry failed — manual resolution required',time:'Mar 15, 2026 · 14:05',c:'#dc2626'},{text:'All stakeholders notified',time:'Mar 15, 2026 · 14:06',c:'#d97706'}]);
+    case 'INV-2026-006':
+      return metaGrid(inv)+statusBlk('#d97706','Current Status','Awaiting Customer Approval Upload','Report was signed and sent to customer. Waiting for PO to upload the customer approval.')+attRow('SP Report — DELT-3003.pdf','System generated · Mar 01, 2026','')+attRow('Additional Report — Delta GmbH.pdf','Signed by David R. · Mar 05, 2026','')+'<div style="margin-bottom:14px"><button class="btn warn lg" onclick="uploadCustApproval()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload Customer Approval</button></div>'+trigRows([{text:'Additional Report signed by David R. (Bizzops)',time:'Mar 05, 2026 · 14:00',c:'#7c3aed'},{text:'Sent to Lars Weber (l.weber@delta-gmbh.de)',time:'Mar 05, 2026 · 14:05',c:'#059669'},{text:'Reminder #1 sent to PO — Marco M.',time:'Mar 15, 2026 · 09:00',c:'#d97706'}]);
+    case 'INV-2026-008':
+      return metaGrid(inv)+statusBlk('#7c3aed','Current Status','Invoice Awaiting Bizzops Confirmation','System has generated the invoice template. Bizzops must review and confirm.')+attRow('SP/WP Report — SIGM-4002-4003.pdf','System generated · Mar 20, 2026','')+'<div style="margin-bottom:14px"><button class="btn biz lg" onclick="confirmInvoice(\'INV-2026-008\',\'Sigma Ltd\',\'invoicing@invoflow.com\')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Confirm Invoice</button></div>'+trigRows([{text:'Invoice template generated',time:'Mar 20, 2026 · 16:02',c:'#2563eb'},{text:'Reminder #1 sent to Bizzops — David R.',time:'Mar 25, 2026 · 09:00',c:'#d97706'},{text:'Reminder #2 sent to Bizzops — David R.',time:'Apr 01, 2026 · 09:00',c:'#d97706'}]);
+    case 'INV-2026-009':
+      return metaGrid(inv)+statusBlk('#7c3aed','Current Status','Additional Report Awaiting Signature','Bizzops must review and sign before sending to TechNova SA.')+attRow('SP Report — TECH-5001.pdf','System generated · Mar 10, 2026','')+attRow('Additional Report — TechNova SA.pdf','Created by system · Mar 11, 2026','<button class="btn info sm" style="margin-right:6px" onclick="reviewReport()">Review</button>')+'<div style="margin-bottom:14px"><button class="btn biz lg" onclick="signReport()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>Sign Additional Report</button></div>'+trigRows([{text:'Additional Report created automatically',time:'Mar 11, 2026 · 08:00',c:'#2563eb'},{text:'Reminder #1 sent to Bizzops — David R.',time:'Mar 15, 2026 · 09:00',c:'#d97706'},{text:'Reminder #2 sent to Bizzops — David R.',time:'Mar 22, 2026 · 09:00',c:'#d97706'}]);
+    default:return'<div style="padding:20px;color:var(--tx2);text-align:center">Detail view not available for this invoice.</div>';
+  }
+}
+
+/* SCENARIO ACTIONS */
+function proposeNewDate(bmId){closePanel('panel-inv-detail');openBMIF(bmId,'propose');}
+function validateProof(bmId){closePanel('panel-inv-detail');openBMIF(bmId,'validate');}
+function doSplitBM(){closePanel('panel-inv-detail');splitMode=true;showMain('bm',document.getElementById('ni-bm'));var banner=document.getElementById('bm-split-banner');if(banner)banner.style.display='flex';renderBMs(['BM-2026-07']);document.getElementById('bm-panel-title').textContent='BM Overview — Split BM Mode';toast('Split mode active: showing open BMs only. Click + Invoice on BM-2026-07.','ok');}
+function exitSplitMode(){splitMode=false;var b=document.getElementById('bm-split-banner');if(b)b.style.display='none';renderBMs();document.getElementById('bm-panel-title').textContent='BM Overview — 7 Records';}
+function uploadCustApproval(){var body=document.getElementById('inv-detail-body');var z=document.createElement('div');z.innerHTML='<div style="margin-top:14px;padding:14px;background:var(--blue-100);border:1px solid rgba(37,99,235,.2);border-radius:var(--r)"><div style="font-size:12px;font-weight:600;color:var(--blue-600);margin-bottom:8px">Upload Customer Approval</div><div class="uz" onclick="simulateApprovalUpload(this)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--tx3)" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><div class="uz-title">Click to upload approval PDF</div></div></div>';body.appendChild(z);z.scrollIntoView({behavior:'smooth',block:'nearest'});}
+function simulateApprovalUpload(el){el.outerHTML='<div class="file-pill"><span style="flex:1;font-size:12px;color:var(--txs)">Customer_Approval_DeltaGmbH.pdf</span></div>';setTimeout(function(){showPopup('Customer Approval Uploaded','Notification sent to Bizzops. The approval is now under review.','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>','#059669',null);},300);}
+function reviewReport(){document.getElementById('pdf-title').textContent='Additional Report — TechNova SA';document.getElementById('pdf-body').innerHTML='<div style="background:#f5f5f4;border:1px solid var(--bd2);border-radius:var(--r);padding:24px;font-family:Georgia,serif;font-size:12.5px;color:#1c1c1c;line-height:1.7"><div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:14px"><div><h3 style="font-size:15px;margin-bottom:4px">InvoFlow · Additional Report</h3><div style="font-size:11px;color:#666">Mar 11, 2026</div></div><button class="btn-icon" title="Edit report" style="margin-left:auto"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div><div style="border-top:1px solid #ddd;padding-top:12px"><div style="display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:4px 0;font-size:12px"><span style="color:#666">Customer</span><span>TechNova SA</span></div><div style="display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:4px 0;font-size:12px"><span style="color:#666">Ticket Reference</span><span>TECH-5001</span></div><div style="display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:4px 0;font-size:12px"><span style="color:#666">Story Points Delivered</span><span>42</span></div><div style="display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:4px 0;font-size:12px"><span style="color:#666">Sprint Velocity</span><span>8.4</span></div><div style="display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:4px 0;font-size:12px"><span style="color:#666">Approved By</span><span>Marc Dupont</span></div><div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;font-weight:600"><span style="color:#666">Total Amount</span><span>CHF 7,000</span></div></div></div>'+'<div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end"><button class="btn" onclick="closePanel(\'panel-pdf\')">Close</button></div>';openPanel('panel-pdf');}
+function signReport(){document.getElementById('pdf-title').textContent='Sign Additional Report — TechNova SA';document.getElementById('pdf-body').innerHTML='<div style="background:#f5f5f4;border:1px solid var(--bd2);border-radius:var(--r);padding:24px;font-family:Georgia,serif;font-size:12.5px;color:#1c1c1c;line-height:1.7"><div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:14px"><div><h3 style="font-size:14px">InvoFlow · Additional Report — Signature Required</h3></div><button class="btn-icon" title="Edit report"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div><div style="border-top:1px solid #ddd;padding-top:12px"><div style="display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:4px 0;font-size:12px"><span style="color:#666">Customer</span><span>TechNova SA</span></div><div style="display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:4px 0;font-size:12px"><span style="color:#666">Amount</span><span>CHF 7,000</span></div><div style="display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:4px 0;font-size:12px"><span style="color:#666">Ticket Reference</span><span>TECH-5001</span></div><div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px"><span style="color:#666">Story Points</span><span>42</span></div></div><div style="margin-top:14px"><div style="font-size:11px;color:#666;margin-bottom:6px">Provide your electronic signature:</div><div id="sig-box2" style="border:1.5px solid var(--bd2);border-radius:6px;width:100%;height:70px;background:#fff;display:flex;align-items:center;justify-content:center;color:var(--tx3);font-size:12px;cursor:crosshair;font-family:var(--font)" onclick="addSig()">Click here to sign</div><div style="font-size:10.5px;color:#999;margin-top:4px">Click to add signature · David R. · Bizzops Manager</div></div></div>'+'<div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start"><div style="display:flex;gap:8px;align-items:center"><button class="btn" onclick="closePanel(\'panel-pdf\')">Cancel</button><button class="btn danger" onclick="closePanel(\'panel-pdf\')">Decline</button><button class="btn p" id="sig-confirm-btn" onclick="confirmSignature()" style="opacity:.4;pointer-events:none">Confirm Signature</button></div><div style="font-size:11px;color:var(--red-600);margin-top:4px;width:100%">Declining requires you to upload your own report</div></div>';openPanel('panel-pdf');}
+function addSig(){var el=document.getElementById('sig-box2');if(el){el.style.background='var(--emerald-50)';el.style.color='var(--emerald-600)';el.style.fontWeight='600';el.textContent='David R.  ✓  Apr 7, 2026';}var btn=document.getElementById('sig-confirm-btn');if(btn){btn.style.opacity='1';btn.style.pointerEvents='auto';}}
+function confirmSignature(){closePanel('panel-pdf');showPopup('Report Signed & Downloaded','Send report to: Marc Dupont — m.dupont@technova.ch (TechNova SA)','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>','#059669',function(){toast('INV-2026-009 status updated to Sent','ok');});}
+function confirmInvoice(invId,customer,delivery){document.getElementById('pdf-title').textContent='Invoice Template — '+customer;document.getElementById('pdf-body').innerHTML='<div style="background:#f9fafb;border:1px solid var(--bd);border-radius:var(--r);padding:24px;font-family:Georgia,serif;font-size:12.5px;color:#1c1c1c;line-height:1.7"><div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px"><div><h3 style="font-size:16px;font-weight:700">InvoFlow GmbH</h3><div style="font-size:11px;color:#666">Musterstraße 1 · 10115 Berlin</div></div><div style="display:flex;gap:8px;align-items:center"><span style="font-size:18px;color:#666">INVOICE</span><button class="btn-icon" title="Edit invoice"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div></div><div style="background:#f5f5f4;border-radius:6px;padding:12px;margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:12px;border-bottom:1px solid #ddd;padding:4px 0"><span style="color:#666">Invoice No.</span><span style="font-weight:600">'+invId+'</span></div><div style="display:flex;justify-content:space-between;font-size:12px;border-bottom:1px solid #ddd;padding:4px 0"><span style="color:#666">Invoice Date</span><span>Apr 07, 2026</span></div><div style="display:flex;justify-content:space-between;font-size:12px;border-bottom:1px solid #ddd;padding:4px 0"><span style="color:#666">Customer</span><span>'+customer+'</span></div><div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0"><span style="color:#666">BM Reference</span><span>BM-SIGM-2026-04</span></div></div><div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;padding:8px 0"><span>Total Amount</span><span>£ 6,500</span></div></div>'+'<div style="margin-top:14px"><div style="display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start"><div style="display:flex;gap:8px;align-items:center"><button class="btn" onclick="closePanel(\'panel-pdf\')">Decline</button><button class="btn p lg" onclick="doConfirmInvoice(\''+invId+'\',\''+delivery+'\')">Confirm &amp; Send</button></div><div style="font-size:11px;color:var(--red-600);margin-top:4px;width:100%">Declining requires you to upload your own invoice template</div></div></div>';openPanel('panel-pdf');}
+function doConfirmInvoice(invId,delivery){closePanel('panel-pdf');showPopup('Invoice Confirmed & Downloaded','Send invoice to: invoicing@invoflow.com (Sigma Ltd — Email delivery)','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>','#059669',function(){toast(invId+' status updated to Sent','ok');});}
+/* BM INTERFACE */
+function openBMIF(bmId,mode){var bm=BMS.find(function(b){return b.id===bmId;});if(!bm)return;document.getElementById('bm-if-title').textContent='BM Interface — '+bm.id;document.getElementById('bm-if-sub').textContent=bm.customer+' · '+bm.cid;document.getElementById('bm-if-back-lbl').textContent={propose:'Back to Invoice',validate:'Back to Invoice',view:'Back to BM Overview'}[mode]||'Back';document.getElementById('bm-if-body').innerHTML=buildBMIF(bm,mode);closeSub('sub-bm-add');openSub('sub-bm-if');}
+function closeBMIF(){closeSub('sub-bm-if');}
+function buildBMIF(bm,mode){
+  function fld(label,val,editable,proofFn,showProof){var inp='<input class="'+(editable?'':'blocked')+'" value="'+val+'"'+(editable?'':' readonly')+' style="flex:1">';var btn=editable?'<button class="edit-btn" onclick="showEditProof()" title="Edit"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>':'';var proof=showProof?'<span class="pill pending" style="cursor:pointer;margin-left:6px" onclick="'+proofFn+'">View Proof</span>':'';return'<div class="f"><label>'+label+'</label><div class="edit-wrap">'+inp+btn+proof+'</div></div>';}
+  var h='<div class="fsec"><div class="fsec-title">BM Details</div>';
+  h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:8px 10px;background:var(--bg2);border-radius:var(--r)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--tx3)" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span style="font-size:12px;color:var(--tx2)">BM_PurchaseOrder_'+bm.id+'.pdf</span><button class="btn sm" style="margin-left:auto">Download</button></div>';
+  h+='<div class="g2">'+fld('Internal BM Number',bm.id,false,'',false)+fld('Customer BM Number',bm.cid,false,'',false)+'</div>';
+  h+='<div class="g2">'+fld('Customer AZ Number',bm.az,false,'',false)+fld('Account Manager',bm.am,false,'',false)+'</div>';
+  h+='<div class="f" style="margin-bottom:12px"><label>Topic</label><input value="'+(bm.topic||'')+'" placeholder="e.g. Frontend Redesign"></div>';
+  h+='<div class="g2"><div class="f"><label>Project Owner</label><select>'+(bm.po==='Alissar A.'?'<option selected>Alissar A.</option><option>Maria K.</option><option>Marco M.</option>':bm.po==='Maria K.'?'<option>Alissar A.</option><option selected>Maria K.</option><option>Marco M.</option>':'<option>Alissar A.</option><option>Maria K.</option><option selected>Marco M.</option>')+'</select></div>'+fld('Billing Type',bm.billing,false,'',false)+'</div>';
+  h+='<div class="g2">'+fld('Proposal Date',bm.prop,false,'',false)+fld('Create Date',bm.created,false,'',false)+'</div>';
+  h+='<div class="g2">'+fld('Start Date',bm.start,false,'',false);
+  if(mode==='propose'){h+='<div class="f"><label>Due Date <span class="req">*</span></label><div class="edit-wrap"><input value="'+bm.due+'" style="flex:1"><button class="edit-btn" onclick="showProposeDateUI()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div><div id="propose-date-ui" style="display:none;margin-top:8px;padding:12px;background:var(--blue-100);border-radius:var(--r)"><div style="font-size:11.5px;font-weight:600;color:var(--blue-600);margin-bottom:8px">Propose New Due Date</div><input type="date" style="width:100%;margin-bottom:8px"><div class="uz" onclick="simulateProofUpload(this)" style="padding:12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--tx3)" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><div class="uz-title">Upload proof of customer approval</div></div></div></div>';}
+  else if(mode==='validate'){h+='<div class="f"><label>Due Date — New Date Proposed</label><div class="edit-wrap"><input value="May 30, 2026" style="flex:1"><span class="pill pending" style="cursor:pointer;margin-left:6px" onclick="openProofAttachment()">View Proof</span></div></div>';}
+  else{h+=fld('Due Date',bm.due,true,'','');}
+  h+='</div><div class="g2">'+fld('Amount',bm.amt,true,'','')+(mode==='validate'?fld('Status',bm.status,false,'',''):fld('Status',bm.status,false,'',''))+'</div></div>';
+  h+='<div class="fsec"><div class="fsec-title">Instances</div>';
+  bm.inst.forEach(function(i){h+='<div class="inst-row"><div class="g3"><div class="f"><label>Instance ID</label><input class="blocked" value="'+i.id+'" readonly></div><div class="f"><label>Description</label><input class="blocked" value="'+i.desc+'" readonly></div><div class="f"><label>Amount</label><input class="blocked" value="'+i.amt+'" readonly></div></div></div>';});
+  h+='<button class="btn sm" style="opacity:.45;cursor:not-allowed;margin-top:6px">+ Add Instance (only when extending)</button></div>';
+  if(mode==='validate'){h+='<div style="background:var(--blue-100);border:1px solid rgba(37,99,235,.2);border-radius:var(--r);padding:14px;margin-bottom:14px"><div style="font-size:12px;font-weight:600;color:var(--blue-600);margin-bottom:8px">Proof Validation</div><div style="font-size:12px;color:var(--blue-600);margin-bottom:10px">New proposed date: <b>May 30, 2026</b> · Proof: Customer_Approval_BetaCorp.pdf</div><div style="display:flex;gap:8px"><button class="btn success" onclick="doValidateDate()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Validate New Date</button><button class="btn danger" onclick="toast(\'Decline flow — contact PO to re-submit proof\',\'\')">Decline</button></div></div>';}
+  h+='<div style="padding:8px 0">'+(bm.status==='Open'?'<button class="btn p lg" onclick="openInvAdd(\''+bm.id+'\')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Invoice</button>':'<button class="btn sm" style="opacity:.5;cursor:not-allowed" onclick="toast(\'Cannot add invoice — BM is Closed\',\'err\')">+ Add Invoice (BM Closed)</button>')+'</div>';
+  return h;
+}
+function showProposeDateUI(){var el=document.getElementById('propose-date-ui');if(el)el.style.display=el.style.display==='none'?'block':'none';}
+function simulateProofUpload(el){el.outerHTML='<div class="file-pill"><span style="flex:1;font-size:12px;color:var(--txs)">Customer_Approval_BetaCorp.pdf</span></div>';setTimeout(function(){showPopup('Proof Uploaded','Notification sent to Bizzops for validation.','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>','#059669',function(){closeSub('sub-bm-if');});},200);}
+function openProofAttachment(){document.getElementById('pdf-title').textContent='Proof — Customer Approval Email';document.getElementById('pdf-body').innerHTML='<div style="background:#f9fafb;border-radius:var(--r);padding:14px;font-size:12.5px;line-height:1.7"><div style="background:var(--bg3);border-radius:6px;padding:10px;margin-bottom:12px;font-size:12px"><b>From:</b> peter.klaus@betacorp.io<br><b>To:</b> maria.k@invoflow.com<br><b>Date:</b> Apr 17, 2026<br><b>Subject:</b> RE: BM Extension — BM-BETA-2026-02</div><p>Dear Maria,<br><br>We confirm our approval for the extension of BM-BETA-2026-02. The new agreed end date is <b>May 30, 2026</b>.<br><br>Please proceed with the necessary updates.<br><br>Best regards,<br>Peter Klaus<br>Procurement Lead, BetaCorp GmbH</p></div>'+'<div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end"><button class="btn success" onclick="doValidateDate()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Validate</button><button class="btn danger" onclick="toast(\'Decline flow — notify PO\',\'\');closePanel(\'panel-pdf\')">Decline</button></div>';openPanel('panel-pdf');}
+function doValidateDate(){closePanel('panel-pdf');showPopup('BM Date Validated','New BM end date (May 30, 2026) set. INV-2026-003 status updated to Pending.','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>','#059669',function(){closeSub('sub-bm-if');});}
+function showEditProof(){toast('Edit requires proof upload — notification will be sent to Bizzops','');}
+
+/* AZ INTERFACE */
+function openAZIF(azId){var az=AZS.find(function(a){return a.id===azId;});if(!az)return;document.getElementById('az-if-title').textContent='AZ Interface — '+az.id;document.getElementById('az-if-sub').textContent=az.customer+' · '+az.cid;document.getElementById('az-if-body').innerHTML=buildAZIF(az);openSub('sub-az-if');}
+function buildAZIF(az){function fld(label,val,editable){var inp='<input class="'+(editable?'':'blocked')+'" value="'+val+'"'+(editable?'':' readonly')+' style="flex:1">';var btn=editable?'<button class="edit-btn" onclick="showEditProof()" title="Edit — requires proof"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>':'';return'<div class="f"><label>'+label+(editable?'<span style="font-size:10px;color:var(--txw);margin-left:6px">Requires proof</span>':'')+'</label><div class="edit-wrap">'+inp+btn+'</div></div>';}
+var h='<div class="fsec"><div class="fsec-title">AZ Details</div>';h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:8px 10px;background:var(--bg2);border-radius:var(--r)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--tx3)" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span style="font-size:12px;color:var(--tx2)">AZ_Framework_'+az.id+'.pdf</span><button class="btn sm" style="margin-left:auto">Download</button></div>';
+h+='<div class="g2">'+fld('Internal AZ #',az.id,false)+fld('Customer AZ #',az.cid,false)+'</div>';
+h+='<div class="f" style="margin-bottom:12px">'+fld('AZ Title',az.title,false)+'</div>';
+h+='<div class="g2">'+fld('Creation Date',az.created,false)+fld('Start Date',az.start,false)+'</div>';
+h+='<div class="g2">'+fld('End Date',az.end,true)+fld('Currency',az.cur,false)+'</div>';
+h+='<div class="g2">'+fld('Total Amount',az.amt,true)+fld('Daily Rate',az.daily,true)+'</div>';
+h+='<div class="g2">'+fld('WP Price',az.wp,true)+'<div class="f"><label>Account Manager</label><select>'+(az.am==='Sara K.'?'<option selected>Sara K.</option><option>Anna B.</option><option>Tom B.</option>':az.am==='Anna B.'?'<option>Sara K.</option><option selected>Anna B.</option><option>Tom B.</option>':'<option>Sara K.</option><option>Anna B.</option><option selected>Tom B.</option>')+'</select></div></div></div>';
+h+='<div style="display:flex;gap:8px"><button class="btn p" onclick="toast(\'AZ updated successfully\',\'ok\');closeSub(\'sub-az-if\')">Save Changes</button><button class="btn" onclick="closeSub(\'sub-az-if\')">Cancel</button></div>';return h;}
+
+/* INVOICE ADD */
+function openInvAdd(bmId){var bm=BMS.find(function(b){return b.id===bmId;});if(!bm){toast('BM not found','err');return;}if(bm.status!=='Open'){toast('Cannot add invoice — BM is Closed','err');return;}document.getElementById('inv-add-ref').textContent=bm.id+' · '+bm.customer;document.getElementById('inv-add-body').innerHTML=buildInvAdd(bm,splitMode);closeSub('sub-bm-if');closeSub('sub-bm-add');openSub('sub-inv-add');}
+function buildInvAdd(bm,splitContext){var pct=splitContext?(1500/14000*100):(4200/14000*100);var fillC=pct>80?'#dc2626':pct>60?'#d97706':'#059669';var h='';if(splitContext){h+='<div style="background:rgba(67,56,202,.08);border:2px solid rgba(67,56,202,.25);border-radius:var(--r);padding:12px 14px;margin-bottom:16px"><div style="font-size:12.5px;font-weight:700;color:var(--indigo-600);margin-bottom:3px">Split BM Flow</div><div style="font-size:12px;color:var(--indigo-600)">Overflow amount (€ 1,500) from BM-BETA-2026-02 is being reassigned to BM-2026-07.</div></div>';}
+h+='<div class="fsec"><div class="fsec-title">Invoice Details</div><div class="g2"><div class="f"><label>Invoice # (Auto)</label><input class="blocked" value="INV-2026-014" readonly></div><div class="f"><label>Customer</label><input class="blocked" value="'+bm.customer+'" readonly></div></div><div class="g2"><div class="f"><label>BM Reference</label><input class="blocked" value="'+bm.id+'" readonly></div><div class="f"><label>AZ Reference</label><input class="blocked" value="'+bm.az+'" readonly></div></div><div class="g2"><div class="f"><label>Account Manager</label><input class="blocked" value="'+bm.am+'" readonly></div><div class="f"><label>Project Owner</label><input class="blocked" value="'+bm.po+'" readonly></div></div></div>';
+h+='<div class="fsec"><div class="fsec-title">Select Jira Ticket(s)</div>';
+h+=(splitContext?'<div class="jira-item" style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border:2px solid var(--indigo-600);border-radius:var(--r);margin-bottom:6px;background:rgba(67,56,202,.05)"><div><div style="font-size:12.5px;font-weight:700">BETA-2002</div><div style="font-size:11px;color:var(--tx2);margin-top:1px">BM Overflow — from BM-BETA-2026-02</div></div><div class="mono" style="font-size:13px;font-weight:700;color:var(--emerald-600)">€ 1,500</div></div>':'<div class="jira-item" style="display:flex;align-items:center;justify-content:space-between;padding:9px 12px;border:2px solid var(--indigo-600);border-radius:var(--r);margin-bottom:6px;background:rgba(67,56,202,.05)"><div><div style="font-size:12.5px;font-weight:700">BETA-2003</div><div style="font-size:11px;color:var(--tx2);margin-top:1px">Frontend Redesign — Sprint 1</div></div><div class="mono" style="font-size:13px;font-weight:700;color:var(--emerald-600)">€ 4,200</div></div>');
+h+='<div style="background:var(--bg2);border-radius:var(--r);padding:10px 12px;margin-top:10px"><div style="font-size:11.5px;color:var(--tx2);margin-bottom:6px">BM Budget Utilization</div><div style="background:var(--bg3);border-radius:20px;height:10px;overflow:hidden;margin-bottom:4px"><div style="width:'+pct.toFixed(0)+'%;height:100%;border-radius:20px;background:'+fillC+'"></div></div><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx2)" class="mono"><span>Used: '+(splitContext?'€ 1,500':'€ 4,200')+'</span><span>Total: '+bm.amt+'</span></div></div></div>';
+h+='<div class="fsec"><div class="fsec-title">Invoice Amount</div><div class="g2"><div class="f"><label>Amount</label><input value="'+(splitContext?'€ 1,500':'€ 4,200')+'" class="mono" style="font-weight:700;font-size:14px"></div><div class="f"><label>Invoice Date</label><input type="date" value="2026-04-07"></div></div></div>';
+h+='<div style="display:flex;gap:8px"><button class="btn p lg" onclick="createInvoiceTicket(\''+bm.id+'\',\''+bm.customer+'\','+(splitContext?'true':'false')+')">Create Invoice Ticket</button><button class="btn" onclick="closeSub(\'sub-inv-add\')">Cancel</button></div>';return h;}
+function createInvoiceTicket(bmId,customer,isSplit){showPopup(isSplit?'BM Split Successful!':'Invoice Ticket Created!',isSplit?'INV-2026-014 (BETA-2002 · € 1,500) created in BM-2026-07. INV-2026-004 status → Pending.':'INV-2026-014 created in '+bmId+'. Notification sent to AM.','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>','#059669',function(){closeSub('sub-inv-add');if(isSplit){exitSplitMode();showMain('inv',document.getElementById('ni-inv'));}});}
+/* CUSTOMER ADD / EDIT */
+function openCustAdd(){
+  document.getElementById('cust-form-title').textContent='Add New Customer';
+  document.getElementById('cust-form-sub').textContent='Customer ID will be auto-generated';
+  document.getElementById('cust-form-body').innerHTML=buildCustForm(null);
+  openSub('sub-cust');
+}
+function openCustEdit(cid){
+  var c=CUSTS.find(function(x){return x.id===cid;});if(!c)return;
+  document.getElementById('cust-form-title').textContent='Edit Customer — '+c.name;
+  document.getElementById('cust-form-sub').textContent=c.id+' · '+c.addr;
+  document.getElementById('cust-form-body').innerHTML=buildCustForm(c);
+  openSub('sub-cust');
+}
+function buildCustForm(c){
+  var isEdit=!!c;
+  var v=function(x){return x||'';};
+  var h='<div class="fsec"><div class="fsec-title"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Company Info</div>';
+  h+='<div class="g2">';
+  h+='<div class="f"><label>Customer ID</label><input class="blocked" value="'+(isEdit?v(c.id):'Auto-generated')+'" readonly></div>';
+  h+='<div class="f"><label>Company Name <span class="req">*</span></label><input placeholder="e.g. Acme AG" value="'+v(isEdit?c.name:'')+'" id="cf-name"></div>';
+  h+='</div>';
+  h+='<div class="f" style="margin-bottom:10px"><label>Registered Address <span class="req">*</span></label><input placeholder="Full address" value="'+v(isEdit?c.addr:'')+'" id="cf-addr"></div>';
+  h+='<div class="f" style="margin-bottom:14px"><label>Company Registration Number</label><input placeholder="e.g. HRB 123456" value="'+v(isEdit?c.reg:'')+'" id="cf-reg"></div>';
+  /* + Add AZ button */
+  h+='<div style="margin-bottom:4px"><button class="btn sky sm" onclick="openAZFromCust()"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add AZ</button><span style="font-size:11px;color:var(--tx3);margin-left:10px">Link a new framework agreement to this customer</span></div>';
+  h+='</div>';/* end fsec company */
+
+  /* Contacts */
+  h+='<div class="fsec"><div class="fsec-title"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Contacts</div>';
+  if(isEdit&&c.contact){
+    h+='<div style="background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:12px 14px;margin-bottom:10px">';
+    h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div style="font-size:12px;font-weight:600;color:var(--tx)">'+c.contact.name+'<span class="pill sent" style="margin-left:6px;font-size:9px">Primary</span></div>';
+    h+='<button class="btn-icon" title="Edit contact"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></div>';
+    h+='<div class="g2"><div class="f"><label>Full Name</label><input value="'+v(c.contact.name)+'"></div><div class="f"><label>Email</label><input value="'+v(c.contact.email)+'"></div></div>';
+    h+='<div class="g2" style="margin-top:10px"><div class="f"><label>Mobile</label><input value="'+v(c.contact.mobile)+'"></div><div class="f"><label>Department</label><input value="'+v(c.contact.dept)+'"></div></div>';
+    h+='<div class="f" style="margin-top:10px"><label>Position</label><input value="'+v(c.contact.pos)+'"></div>';
+    h+='</div>';
+    /* + Add BM next to the contact row */
+    h+='<div style="margin-top:8px"><button class="btn sky sm" onclick="openBMFromCust()"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add BM</button><span style="font-size:11px;color:var(--tx3);margin-left:10px">Link a new BM to this contact</span></div>';
+  } else {
+    h+='<div class="g2"><div class="f"><label>Full Name <span class="req">*</span></label><input placeholder="Contact full name" id="cf-cname"></div><div class="f"><label>Email <span class="req">*</span></label><input placeholder="contact@company.com" id="cf-cemail"></div></div>';
+    h+='<div class="g2" style="margin-top:10px"><div class="f"><label>Mobile</label><input placeholder="+49 171 000 0000" id="cf-cmobile"></div><div class="f"><label>Department</label><input placeholder="Finance" id="cf-cdept"></div></div>';
+    h+='<div class="f" style="margin-top:10px"><label>Position</label><input placeholder="e.g. Finance Manager" id="cf-cpos"></div>';
+    h+='<div style="margin-top:10px"><button class="btn sky sm" onclick="openBMFromCust()"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add BM</button><span style="font-size:11px;color:var(--tx3);margin-left:10px">Link a new BM to this contact</span></div>';
+  }
+  h+='</div>';
+
+  /* Delivery & Proof */
+  h+='<div class="fsec"><div class="fsec-title"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.63 19.79 19.79 0 01.1 1a2 2 0 012-.22h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>Invoice Delivery &amp; Proof</div>';
+  var delTypeVal=isEdit?v(c.delType):'Email';
+  var delValVal=isEdit?v(c.delVal):'';
+  h+='<div class="g2"><div class="f"><label>Delivery Type</label><select id="cf-deltype" onchange="updateDeliveryLabel()"><option'+(delTypeVal==='Email'?' selected':'')+'>Email</option><option'+(delTypeVal==='Platform'?' selected':'')+'>Platform</option></select></div><div class="f"><label id="cf-dellabel">'+(delTypeVal==='Platform'?'Platform URL':'Email Address')+'</label><input id="cf-delval" placeholder="'+(delTypeVal==='Platform'?'https://portal.example.com/invoices':'invoicing@example.com')+'" value="'+delValVal+'"></div></div>';
+
+  /* Proof Preference — fully editable with type switcher */
+  var proofTypes=['Additional Report','Email Proof','None'];
+  var curProof=isEdit?v(c.proof):'Email Proof';
+  h+='<div class="f" style="margin-top:12px"><label>Proof Preference</label>';
+  h+='<div class="proof-choices" id="proof-choice-row">';
+  proofTypes.forEach(function(pt){
+    h+='<div class="proof-choice'+(curProof===pt?' sel':'')+'" onclick="selectProofType(this,\''+pt+'\')">';
+    h+='<div class="proof-choice-title">'+pt+'</div>';
+    h+='<div class="proof-choice-sub">'+(pt==='Additional Report'?'Formal signed report':pt==='Email Proof'?'Simple email confirmation':'No proof required')+'</div>';
+    h+='</div>';
+  });
+  h+='</div>';
+  h+='<div id="proof-credentials-wrap" style="'+(curProof==='None'?'display:none':'')+'margin-top:10px">';
+  if(isEdit&&c.ar&&c.ar.length>0){
+    h+='<div style="font-size:11.5px;font-weight:600;color:var(--tx2);margin-bottom:8px">Additional Report Credentials</div>';
+    h+='<div id="ar-list">';
+    c.ar.forEach(function(ar,i){
+      h+='<div class="inst-row" style="padding:10px 12px;margin-bottom:8px" id="ar-item-'+i+'"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><span style="font-size:12px;font-weight:600;color:var(--tx)">Field '+(i+1)+'</span><button class="btn-icon" onclick="removeARField('+i+')" title="Remove"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="g2"><div class="f"><label>Field Name</label><input value="'+ar.n+'"></div><div class="f"><label>Type</label><select>'+'<option'+(ar.t==='String'?' selected':'')+'>String</option><option'+(ar.t==='Integer'?' selected':'')+'>Integer</option><option'+(ar.t==='Float'?' selected':'')+'>Float</option><option'+(ar.t==='Date'?' selected':'')+'>Date</option>'+'</select></div></div></div>';
+    });
+    h+='</div>';
+  } else if(curProof!=='None'){
+    h+='<div style="font-size:11.5px;font-weight:600;color:var(--tx2);margin-bottom:8px">Additional Report Credentials</div><div id="ar-list"></div>';
+  }
+  h+='<button class="btn sky sm" id="add-ar-btn" onclick="addARField()" style="margin-top:4px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Credential Field</button>';
+  h+='</div></div>';
+
+  /* Save buttons */
+  h+='<div style="display:flex;gap:8px"><button class="btn p lg" onclick="saveCust('+(isEdit?'\''+c.id+'\'':'null')+')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>'+(isEdit?'Save Changes':'Create Customer')+'</button><button class="btn" onclick="closeSub(\'sub-cust\')">Cancel</button></div>';
+  return h;
+}
+
+var arFieldCount=0;
+function addARField(){
+  arFieldCount++;
+  var list=document.getElementById('ar-list');if(!list)return;
+  var idx='new-'+arFieldCount;
+  var div=document.createElement('div');
+  div.className='inst-row';div.style.cssText='padding:10px 12px;margin-bottom:8px';div.id='ar-item-'+idx;
+  div.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><span style="font-size:12px;font-weight:600;color:var(--tx)">New Field</span><button class="btn-icon" onclick="this.closest(\'.inst-row\').remove()" title="Remove"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="g2"><div class="f"><label>Field Name</label><input placeholder="e.g. Sprint Number"></div><div class="f"><label>Type</label><select><option>String</option><option>Integer</option><option>Float</option><option>Date</option></select></div></div>';
+  list.appendChild(div);
+}
+function removeARField(i){var el=document.getElementById('ar-item-'+i);if(el)el.remove();}
+function selectProofType(el,type){
+  el.closest('#proof-choice-row').querySelectorAll('.proof-choice').forEach(function(e){e.classList.remove('sel');});
+  el.classList.add('sel');
+  var wrap=document.getElementById('proof-credentials-wrap');
+  if(wrap)wrap.style.display=type==='None'?'none':'block';
+}
+function updateDeliveryLabel(){
+  var sel=document.getElementById('cf-deltype');if(!sel)return;
+  var lbl=document.getElementById('cf-dellabel');var inp=document.getElementById('cf-delval');
+  if(sel.value==='Platform'){if(lbl)lbl.textContent='Platform URL';if(inp)inp.placeholder='https://portal.example.com/invoices';}
+  else{if(lbl)lbl.textContent='Email Address';if(inp)inp.placeholder='invoicing@example.com';}
+}
+function saveCust(cid){closeSub('sub-cust');toast(cid?'Customer updated successfully':'New customer created','ok');renderCustomers();}
+function openAZFromCust(){closeSub('sub-cust');openSub('sub-az-add');renderAZAddForm('scan');}
+function openBMFromCust(){closeSub('sub-cust');openSub('sub-bm-add');renderBMAddForm('scan');}
+/* AZ ADD FORM */
+function setAZMode(m){azModeV=m;document.getElementById('az-tab-s').classList[m==='scan'?'add':'remove']('on');document.getElementById('az-tab-m').classList[m==='manual'?'add':'remove']('on');renderAZAddForm(m);}
+function renderAZAddForm(m){document.getElementById('az-add-body').innerHTML=buildAZFields(m);}
+function buildAZFields(m){
+  var h='';
+  if(m==='scan'){
+    h='<div class="fsec"><div class="fsec-title">Upload AZ Framework Agreement PDF</div>';
+    h+='<div class="scan-zone" id="az-scan-zone"><div class="scan-bar"></div><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--indigo-600)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><div style="font-size:12.5px;font-weight:600;color:var(--indigo-600);margin-top:10px">Scan AZ Document</div><div style="font-size:11px;color:var(--tx3);margin-top:4px;margin-bottom:14px">Upload a PDF to auto-extract AZ fields</div><button class="btn p" onclick="simulateAZScan()">Upload PDF to Scan</button></div></div>';
+    h+='<div id="az-scanned-fields" style="display:none"><div class="fsec"><div class="fsec-title">Scanned Fields — Review &amp; Confirm</div><div id="az-fields-inner"></div><div style="margin-top:14px;display:flex;gap:8px"><button class="btn p lg" onclick="saveAZ()">Save AZ</button><button class="btn" onclick="closeSub(\'sub-az-add\')">Cancel</button></div></div></div>';
+  } else {
+    h='<div class="fsec"><div class="fsec-title">AZ Framework — Manual Entry</div>';
+    h+='<div class="g2"><div class="f"><label>Internal AZ # (Auto)</label><input class="blocked" value="AZ-2026-07" readonly></div><div class="f"><label>Customer AZ # <span class="req">*</span></label><input id="az-cid" placeholder="AZ-CUST-2026-07"></div></div>';
+    h+='<div class="f" style="margin-bottom:12px"><label>Customer <span class="req">*</span></label><select id="az-cust"><option value="">— select —</option><option>Acme AG</option><option>BetaCorp GmbH</option><option>Delta GmbH</option><option>Sigma Ltd</option><option>TechNova SA</option><option>RedCloud BV</option></select></div>';
+    h+='<div class="f" style="margin-bottom:12px"><label>AZ Title <span class="req">*</span></label><input id="az-title" placeholder="e.g. Platform Development Framework 2026"></div>';
+    h+='<div class="g2"><div class="f"><label>Start Date</label><input type="date" id="az-start"></div><div class="f"><label>End Date <span class="req">*</span></label><input type="date" id="az-end"></div></div>';
+    h+='<div class="g2" style="margin-top:12px"><div class="f"><label>Currency</label><select id="az-cur"><option>EUR</option><option>GBP</option><option>CHF</option></select></div><div class="f"><label>Total Amount <span class="req">*</span></label><input id="az-amt" class="mono" placeholder="e.g. 80000"></div></div>';
+    h+='<div class="g2" style="margin-top:12px"><div class="f"><label>Daily Rate</label><input id="az-daily" class="mono" placeholder="e.g. 850"></div><div class="f"><label>WP Price</label><input id="az-wp" class="mono" placeholder="e.g. 620"></div></div>';
+    h+='<div class="f" style="margin-top:12px"><label>Account Manager</label><select id="az-am"><option>Sara K.</option><option>Anna B.</option><option>Tom B.</option></select></div>';
+    h+='</div><div style="display:flex;gap:8px"><button class="btn p lg" onclick="saveAZ()">Save AZ</button><button class="btn" onclick="closeSub(\'sub-az-add\')">Cancel</button></div>';
+  }
+  return h;
+}
+function simulateAZScan(){
+  var zone=document.getElementById('az-scan-zone');if(zone)zone.innerHTML='<div style="font-size:12px;color:var(--indigo-600);padding:10px">Scanning PDF...</div>';
+  setTimeout(function(){
+    var wrap=document.getElementById('az-scanned-fields');if(wrap)wrap.style.display='block';
+    if(zone)zone.innerHTML='<div class="file-pill"><span style="flex:1;font-size:12px;color:var(--txs)">AZ_Framework_BetaCorp_2026.pdf — scanned</span></div>';
+    var inner=document.getElementById('az-fields-inner');
+    if(inner)inner.innerHTML='<div class="g2"><div class="f"><label>Internal AZ #</label><input class="blocked" value="AZ-2026-07" readonly></div><div class="f"><label>Customer AZ #</label><input value="AZ-BETA-2026-07"></div></div><div class="g2" style="margin-top:10px"><div class="f"><label>Customer</label><input value="BetaCorp GmbH"></div><div class="f"><label>Title</label><input value="Advanced Platform Services 2026"></div></div><div class="g2" style="margin-top:10px"><div class="f"><label>Start Date</label><input value="May 01, 2026"></div><div class="f"><label>End Date</label><input value="Apr 30, 2027"></div></div><div class="g2" style="margin-top:10px"><div class="f"><label>Currency</label><select><option selected>EUR</option><option>GBP</option><option>CHF</option></select></div><div class="f"><label>Total Amount</label><input class="mono" value="€ 75,000"></div></div><div class="g2" style="margin-top:10px"><div class="f"><label>Daily Rate</label><input class="mono" value="€ 820"></div><div class="f"><label>WP Price</label><input class="mono" value="€ 600"></div></div>';
+  },1400);
+}
+function saveAZ(){closeSub('sub-az-add');toast('AZ saved successfully','ok');renderAZs();}
+
+/* BM ADD FORM */
+function setBMMode(m){bmModeV=m;document.getElementById('bm-tab-s').classList[m==='scan'?'add':'remove']('on');document.getElementById('bm-tab-m').classList[m==='manual'?'add':'remove']('on');renderBMAddForm(m);}
+function renderBMAddForm(m){document.getElementById('bm-add-body').innerHTML=buildBMFields(m);}
+function buildBMFields(m){
+  var h='';
+  if(m==='scan'){
+    h='<div class="fsec"><div class="fsec-title">Upload BM / Purchase Order PDF</div>';
+    h+='<div class="scan-zone" id="bm-scan-zone"><div class="scan-bar"></div><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--indigo-600)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><div style="font-size:12.5px;font-weight:600;color:var(--indigo-600);margin-top:10px">Scan BM Document</div><div style="font-size:11px;color:var(--tx3);margin-top:4px;margin-bottom:14px">Upload a PDF to auto-extract BM fields and instances</div><button class="btn p" onclick="simulateBMScan()">Upload PDF to Scan</button></div></div>';
+    h+='<div id="bm-scanned-fields" style="display:none"><div class="fsec"><div class="fsec-title">Scanned Fields — Review &amp; Confirm</div><div id="bm-fields-inner"></div></div>';
+    h+='<div class="fsec"><div class="fsec-title">Instances</div><div id="bm-inst-list"></div><button class="btn sky sm" onclick="addBMInst()"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Instance</button><div class="inst-total" style="margin-top:10px"><span>Total</span><span class="mono" style="font-weight:700;color:var(--emerald-600)" id="bm-total">€ 0</span></div></div>';
+    h+='<div style="display:flex;gap:8px"><button class="btn p lg" onclick="saveBM()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Save BM</button><button class="btn" onclick="closeSub(\'sub-bm-add\')">Cancel</button><div style="flex:1"></div><button class="btn p lg" onclick="openInvAdd(\'BM-2026-07\')" style="background:linear-gradient(135deg,var(--emerald-600),var(--emerald-500));box-shadow:0 2px 6px rgba(5,150,105,.25)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Invoice</button></div>';
+    h+='</div>';
+  } else {
+    h='<div class="fsec"><div class="fsec-title">BM / Purchase Order — Manual Entry</div>';
+    h+='<div class="g2"><div class="f"><label>Internal BM # (Auto)</label><input class="blocked" value="BM-2026-08" readonly></div><div class="f"><label>Customer BM # <span class="req">*</span></label><input id="bm-cid" placeholder="BM-CUST-2026-08"></div></div>';
+    h+='<div class="g2" style="margin-top:10px"><div class="f"><label>Customer <span class="req">*</span></label><select id="bm-cust"><option value="">— select —</option><option>Acme AG</option><option>BetaCorp GmbH</option><option>Delta GmbH</option><option>Sigma Ltd</option><option>TechNova SA</option><option>RedCloud BV</option></select></div><div class="f"><label>AZ Reference <span class="req">*</span></label><select id="bm-az"><option value="">— select —</option><option>AZ-2026-01 (Acme AG)</option><option>AZ-2026-02 (BetaCorp)</option><option>AZ-2026-03 (Delta)</option><option>AZ-2026-04 (Sigma)</option><option>AZ-2026-05 (TechNova)</option><option>AZ-2026-06 (RedCloud)</option></select></div></div>';
+    h+='<div class="f" style="margin-top:10px"><label>Topic</label><input id="bm-topic" placeholder="e.g. API Integration Phase 3"></div>';
+    h+='<div class="g2" style="margin-top:10px"><div class="f"><label>Billing Type</label><select id="bm-bill"><option>Story Point</option><option>Workpackage</option></select></div><div class="f"><label>Account Manager</label><select id="bm-am"><option>Sara K.</option><option>Anna B.</option><option>Tom B.</option></select></div></div>';
+    h+='<div class="g2" style="margin-top:10px"><div class="f"><label>Project Owner</label><select id="bm-po"><option>Alissar A.</option><option>Maria K.</option><option>Marco M.</option></select></div><div class="f"><label>Start Date <span class="req">*</span></label><input type="date" id="bm-start"></div></div>';
+    h+='<div class="f" style="margin-top:10px"><label>Due Date <span class="req">*</span></label><input type="date" id="bm-due"></div>';
+    h+='</div>';
+    h+='<div class="fsec"><div class="fsec-title">Instances</div><div id="bm-inst-list"></div><button class="btn sky sm" onclick="addBMInst()"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Instance</button><div class="inst-total" style="margin-top:10px"><span>Total</span><span class="mono" style="font-weight:700;color:var(--emerald-600)" id="bm-total">€ 0</span></div></div>';
+    h+='<div style="display:flex;gap:8px"><button class="btn p lg" onclick="saveBM()">Save BM</button><button class="btn" onclick="closeSub(\'sub-bm-add\')">Cancel</button><div style="flex:1"></div><button class="btn lg" style="background:linear-gradient(135deg,var(--emerald-600),var(--emerald-500));color:#fff;border-color:transparent;box-shadow:0 2px 6px rgba(5,150,105,.25)" onclick="saveBMAndInvoice()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Invoice</button></div>';
+  }
+  return h;
+}
+function simulateBMScan(){
+  var zone=document.getElementById('bm-scan-zone');if(zone)zone.innerHTML='<div style="font-size:12px;color:var(--indigo-600);padding:10px">Scanning PDF...</div>';
+  setTimeout(function(){
+    var wrap=document.getElementById('bm-scanned-fields');if(wrap)wrap.style.display='block';
+    if(zone)zone.innerHTML='<div class="file-pill"><span style="flex:1;font-size:12px;color:var(--txs)">BM_PurchaseOrder_BetaCorp_008.pdf — scanned</span></div>';
+    var inner=document.getElementById('bm-fields-inner');
+    if(inner)inner.innerHTML='<div class="g2"><div class="f"><label>Internal BM #</label><input class="blocked" value="BM-2026-08" readonly></div><div class="f"><label>Customer BM #</label><input value="BM-BETA-2026-08"></div></div><div class="g2" style="margin-top:10px"><div class="f"><label>Customer</label><input value="BetaCorp GmbH"></div><div class="f"><label>AZ Reference</label><input value="AZ-BETA-2026-02"></div></div><div class="g2" style="margin-top:10px"><div class="f"><label>Topic</label><input value="API Microservices Migration"></div><div class="f"><label>Billing Type</label><select><option selected>Workpackage</option><option>Story Point</option></select></div></div><div class="g2" style="margin-top:10px"><div class="f"><label>Start Date</label><input value="May 10, 2026"></div><div class="f"><label>Due Date</label><input value="Aug 31, 2026"></div></div>';
+    var list=document.getElementById('bm-inst-list');
+    if(list){
+      list.innerHTML='';
+      addBMInstPrefilled('INST-08-A','Microservices Setup','€ 6,000');
+      addBMInstPrefilled('INST-08-B','Testing & QA','€ 4,500');
+      updateInstTotal();
+    }
+  },1400);
+}
+function addBMInstPrefilled(id,desc,amt){
+  instIdCnt++;var list=document.getElementById('bm-inst-list');if(!list)return;
+  var div=document.createElement('div');div.className='inst-row';div.style.marginBottom='10px';
+  div.innerHTML='<div class="g3"><div class="f"><label>Instance ID</label><input class="blocked" value="'+id+'" readonly></div><div class="f"><label>Description</label><input value="'+desc+'"></div><div class="f"><label>Amount</label><input class="mono" value="'+amt+'" oninput="updateInstTotal()"></div></div>';
+  list.appendChild(div);
+}
+function addBMInst(){
+  instIdCnt++;var list=document.getElementById('bm-inst-list');if(!list)return;
+  var div=document.createElement('div');div.className='inst-row';div.style.marginBottom='10px';
+  div.innerHTML='<div class="g3"><div class="f"><label>Instance ID (Auto)</label><input class="blocked" value="INST-NEW-'+instIdCnt+'" readonly></div><div class="f"><label>Description</label><input placeholder="e.g. Sprint 1"></div><div class="f"><label>Amount</label><input class="mono" placeholder="e.g. 5000" oninput="updateInstTotal()"></div></div>';
+  list.appendChild(div);
+}
+function updateInstTotal(){
+  var list=document.getElementById('bm-inst-list');if(!list)return;
+  var total=0;
+  list.querySelectorAll('input.mono').forEach(function(inp){
+    var v=parseFloat(inp.value.replace(/[^0-9.]/g,''))||0;total+=v;
+  });
+  var el=document.getElementById('bm-total');
+  if(el)el.textContent='€ '+total.toLocaleString();
+  el.className='mono '+(total>0?'iok':'');
+}
+function saveBM(){closeSub('sub-bm-add');toast('BM saved successfully','ok');renderBMs();}
+function saveBMAndInvoice(){closeSub('sub-bm-add');toast('BM saved — opening invoice form','ok');renderBMs();setTimeout(function(){openInvAdd('BM-2026-07');},200);}
+/* REPORTS */
+function selectAllFields(){
+  var checked=document.querySelectorAll('#sc-reports input[type=checkbox]');
+  var allOn=Array.from(checked).every(function(c){return c.checked;});
+  checked.forEach(function(c){c.checked=!allOn;});
+}
+function generateReport(){
+  var area=document.getElementById('report-area');if(!area)return;
+  var fields={invId:document.getElementById('rf-inv-id').checked,cust:document.getElementById('rf-cust').checked,amt:document.getElementById('rf-amt').checked,status:document.getElementById('rf-status').checked,jira:document.getElementById('rf-jira').checked,jiraStatus:document.getElementById('rf-jira-st').checked,created:document.getElementById('rf-created').checked,bmId:document.getElementById('rf-bm-id').checked,bmAmt:document.getElementById('rf-bm-amt').checked,bmDue:document.getElementById('rf-bm-due').checked,bmStatus:document.getElementById('rf-bm-status').checked,bmTopic:document.getElementById('rf-bm-topic').checked,azId:document.getElementById('rf-az-id').checked,azPct:document.getElementById('rf-az-pct').checked,azAmt:document.getElementById('rf-az-amt').checked,am:document.getElementById('rf-am').checked,po:document.getElementById('rf-po').checked,paySt:document.getElementById('rf-pay-st').checked,payAmt:document.getElementById('rf-pay-amt').checked};
+  /* Build header */
+  var cols=[];
+  if(fields.invId)cols.push('Invoice #');if(fields.cust)cols.push('Customer');if(fields.amt)cols.push('Amount');if(fields.status)cols.push('Status');if(fields.jira)cols.push('Jira Tickets');if(fields.jiraStatus)cols.push('Jira Status');if(fields.created)cols.push('Created');if(fields.bmId)cols.push('BM #');if(fields.bmAmt)cols.push('BM Amount');if(fields.bmDue)cols.push('BM Due');if(fields.bmStatus)cols.push('BM Status');if(fields.bmTopic)cols.push('BM Topic');if(fields.azId)cols.push('AZ #');if(fields.azPct)cols.push('AZ Opened %');if(fields.azAmt)cols.push('AZ Amount');if(fields.am)cols.push('Account Mgr');if(fields.po)cols.push('Project Owner');if(fields.paySt)cols.push('Payment Status');if(fields.payAmt)cols.push('Bank Entry');
+  if(!cols.length){toast('Select at least one field','err');return;}
+  /* Status chart data */
+  var statusCount={Pending:0,Error:0,Sent:0,Closed:0,Failed:0};INV.forEach(function(i){statusCount[i.is]=(statusCount[i.is]||0)+1;});
+  var chartColors={Pending:'#f59e0b',Error:'#dc2626',Sent:'#2563eb',Closed:'#059669',Failed:'#ec4899'};
+  var maxV=Math.max.apply(null,Object.values(statusCount));
+  var chart='<div style="margin-bottom:20px"><div style="font-size:12px;font-weight:700;color:var(--tx);margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em">Invoice Status Distribution</div>';
+  Object.keys(statusCount).forEach(function(st){var v=statusCount[st];chart+='<div class="chart-bar-row"><div class="chart-bar-label">'+st+'</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:'+(v/maxV*100)+'%;background:'+chartColors[st]+'">'+(v>0?v:'')+'</div></div></div>';});
+  chart+='</div>';
+  /* Customer totals chart */
+  var custTotals={};INV.forEach(function(i){custTotals[i.customer]=(custTotals[i.customer]||0)+1;});
+  var maxC=Math.max.apply(null,Object.values(custTotals));
+  var custColors=['#4338ca','#059669','#f59e0b','#2563eb','#7c3aed','#dc2626'];
+  var cchart='<div style="margin-bottom:20px"><div style="font-size:12px;font-weight:700;color:var(--tx);margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em">Invoices by Customer</div>';
+  Object.keys(custTotals).forEach(function(cu,i){var v=custTotals[cu];cchart+='<div class="chart-bar-row"><div class="chart-bar-label" style="font-size:10.5px">'+cu.split(' ')[0]+'</div><div class="chart-bar-track"><div class="chart-bar-fill" style="width:'+(v/maxC*100)+'%;background:'+custColors[i%custColors.length]+'">'+(v>0?v:'')+'</div></div></div>';});
+  cchart+='</div>';
+  /* Table */
+  var thead='<tr>'+cols.map(function(c){return'<th style="text-align:left;padding:5px 8px;color:var(--tx2);font-weight:600;border-bottom:1.5px solid var(--bd);font-size:11px;white-space:nowrap;text-transform:uppercase;letter-spacing:.02em">'+c+'</th>';}).join('')+'</tr>';
+  var rows=INV.map(function(inv){
+    var bm=BMS.find(function(b){return b.id===inv.bmRef;})||{};
+    var az=AZS.find(function(a){return a.id===inv.az.replace('AZ-'+inv.customer.split(' ')[0].toUpperCase()+'-2026-0','AZ-2026-0');})||{};
+    var pay=PAYS.find(function(p){return p.inv===inv.id;})||{};
+    var cells=[];
+    if(fields.invId)cells.push('<td class="mono" style="font-weight:600;font-size:11px;padding:6px 8px">'+inv.id+'</td>');
+    if(fields.cust)cells.push('<td style="padding:6px 8px;font-size:12px">'+inv.customer+'</td>');
+    if(fields.amt)cells.push('<td class="mono" style="padding:6px 8px;font-weight:600;font-size:12px">'+inv.amt+'</td>');
+    if(fields.status)cells.push('<td style="padding:6px 8px"><span class="pill '+inv.is.toLowerCase()+'">'+inv.is+'</span></td>');
+    if(fields.jira)cells.push('<td style="padding:6px 8px;font-size:11px" class="mono">'+inv.jira.join(', ')+'</td>');
+    if(fields.jiraStatus)cells.push('<td style="padding:6px 8px"><span class="pill '+inv.js.toLowerCase().replace(' ','-')+'">'+inv.js+'</span></td>');
+    if(fields.created)cells.push('<td style="padding:6px 8px;font-size:11px;font-family:var(--mono)">'+inv.created+'</td>');
+    if(fields.bmId)cells.push('<td class="mono" style="padding:6px 8px;font-size:11px">'+inv.bmRef+'</td>');
+    if(fields.bmAmt)cells.push('<td class="mono" style="padding:6px 8px;font-size:11px">'+(bm.amt||'—')+'</td>');
+    if(fields.bmDue)cells.push('<td style="padding:6px 8px;font-size:11px">'+(bm.due||'—')+'</td>');
+    if(fields.bmStatus)cells.push('<td style="padding:6px 8px">'+(bm.status?'<span class="pill '+(bm.status==='Open'?'open':'closed')+'">'+bm.status+'</span>':'—')+'</td>');
+    if(fields.bmTopic)cells.push('<td style="padding:6px 8px;font-size:11.5px;max-width:120px;white-space:normal">'+(bm.topic||'—')+'</td>');
+    if(fields.azId)cells.push('<td class="mono" style="padding:6px 8px;font-size:11px">'+inv.az+'</td>');
+    if(fields.azPct)cells.push('<td style="padding:6px 8px;font-size:11px;font-family:var(--mono)">'+(az.pct?az.pct+'%':'—')+'</td>');
+    if(fields.azAmt)cells.push('<td class="mono" style="padding:6px 8px;font-size:11px">'+(az.amt||'—')+'</td>');
+    if(fields.am)cells.push('<td style="padding:6px 8px;font-size:11.5px">'+inv.am+'</td>');
+    if(fields.po)cells.push('<td style="padding:6px 8px;font-size:11.5px">'+inv.po+'</td>');
+    if(fields.paySt)cells.push('<td style="padding:6px 8px">'+(pay.st?'<span class="pill '+(pay.st==='Closed'?'closed':pay.st==='Failed'?'failed':'aw')+'">'+pay.st+'</span>':'—')+'</td>');
+    if(fields.payAmt)cells.push('<td class="mono" style="padding:6px 8px;font-size:11px">'+(pay.amt||'—')+'</td>');
+    return'<tr>'+cells.join('')+'</tr>';
+  }).join('');
+  area.innerHTML=chart+cchart+'<div style="font-size:12px;font-weight:700;color:var(--tx);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em">Invoice Data ('+INV.length+' records)</div><div style="overflow-x:auto"><table class="tbl" style="width:100%"><thead>'+thead+'</thead><tbody>'+rows+'</tbody></table></div>';
+  toast('Report generated — '+INV.length+' records · '+cols.length+' fields','ok');
+}
+function exportPDF(){toast('Report exported as PDF successfully','ok');}
+
+</script>
+</div></div>
+</body>
+</html>
